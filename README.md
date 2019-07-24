@@ -1,6 +1,6 @@
 # CS Build Week 2
 
-For your second CS Build Week, you and a small team will be competing against your fellow CS students in the ***Lambda Treasure Hunt***! To succeed, you will need to apply knowledge you've learned throughout your entire tenure at Lambda School -- CS, Labs and main track -- to efficiently traverse an island maze, collect treasure, solve puzzles, unearth powerful artifacts and more. Glory and prizes await the victors!
+For your second CS Build Week, you and a small team will be competing against your fellow CS students in the ***Lambda Treasure Hunt***. To succeed, you will need to apply knowledge you've learned throughout your entire tenure at Lambda School -- CS, Labs and main track -- to efficiently traverse an island maze, collect treasure, solve puzzles, unearth powerful artifacts and more. Glory and prizes await the victors!
 
 ## Roles
 
