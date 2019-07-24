@@ -17,4 +17,19 @@ As a frontend developer, you will be building a map of the island and implementi
 ![Lambda Treasure Hunt](img/treasure-hunt-1.png)
 *Treasure Hunt interface courtesy of [Ryan Walker](http://ryanwalker.dev):*
 
-The gods presiding over LambdaMUD Island favor beauty and elegance. Those with aesthetic interfaces might find themselves blessed with mysterious powers throughout the week.
+The gods presiding over LambdaMUD Island favor beauty and elegance. Those with aesthetic interfaces might find themselves mysteriously blessed with powers throughout the week.
+
+## Questions?
+
+Patience: Your questions will be answered soon enough. Here are some resources to peruse in the meantime.
+
+* [Sample LambdaMUD spec/server](https://github.com/LambdaSchool/LambdaMUD-Project)
+* [Legacy Lambda Treasure Hunt spec](https://github.com/LambdaSchool/Lambda-Treasure-Hunt)
+* [Intro to Django github repo](https://github.com/LambdaSchool/Intro-Django)
+* [CS12: Intro to Django: Setup, Models, and Migrations](https://www.youtube.com/watch?v=5rfCWD0jB9U)
+* [CS12: Intro to Django: GraphQL and Graphene](https://www.youtube.com/watch?v=0qsOwWTo2wc)
+* [CS12: Intro to Django: REST and Users](https://www.youtube.com/watch?v=yMGUq3i1qBY)
+* [CS12: Intro to Django: Token Auth, GraphQL Mutations](https://www.youtube.com/watch?v=_8nTE2NE5tg)
+* [Official Django documentation](https://docs.djangoproject.com/en/2.2/intro/)
+
+
