@@ -17,4 +17,4 @@ As a frontend developer, you will be building a map of the island and implementi
 ![Lambda Treasure Hunt](img/treasure-hunt-1.png)
 *Treasure Hunt interface courtesy of [Ryan Walker](http://ryanwalker.dev):*
 
-The gods presiding over LambdaMUD Island favor beauty and elegance. Those with particularly aesthetic interfaces might find themselves blessed with mysterious powers throughout the week.
+The gods presiding over LambdaMUD Island favor beauty and elegance. Those with aesthetic interfaces might find themselves blessed with mysterious powers throughout the week.
