@@ -1,6 +1,6 @@
 # CS Build Week 2
 
-For your second CS Build Week, you and a small team will be competing against your fellow CS students in the ***Lambda Treasure Hunt***. To succeed, you will need to apply knowledge you've learned throughout your entire tenure at Lambda School -- CS, Labs and main track -- to efficiently traverse an island maze, collect treasure, solve puzzles, unearth powerful artifacts and more. Glory and prizes await the victors!
+For your second CS Build Week, you and a small team will be competing against your fellow CS students in the ***Lambda Treasure Hunt***. To succeed, you will need to apply knowledge you've learned throughout your entire tenure at Lambda School -- CS, Labs and main track -- to efficiently traverse an island maze, collect treasure, solve puzzles, unearth powerful artifacts and more. Glory and riches await the victors!
 
 ## Roles
 
@@ -8,7 +8,7 @@ Each team must have a minimum of one Backend and one Frontend developer. The res
 
 ### Backend
 
-As the backend developer, you will be implementing an automated traversal server. By sending POST requests to our LambdaMUD Island server and processing the results, your server will allow your team's characters to move and collect treasure at all hours of the day and night. The teams with efficient traversal and treasure collection algorithms will find themselves prosperous.
+As the backend developer, you will be implementing an automated traversal server. By sending POST requests to our LambdaMUD Island server and processing the response, your server will allow your team to move and collect treasure at all hours of the day and night. The teams with efficient traversal and treasure collection algorithms will find themselves prosperous.
 
 ### Frontend
 
