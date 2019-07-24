@@ -15,6 +15,6 @@ As the backend developer, you will be implementing an automated traversal server
 As a frontend developer, you will be building a map of the island and implementing an interface to move your characters manually. You may do this by interfacing with your own backend server, connecting directly to the LambdaMUD Island server, or some combination of both (recommended).
 
 ![Lambda Treasure Hunt](img/treasure-hunt-1.png)
-*Courtesy of [Ryan Walker](http://ryanwalker.dev):*
+*Treasure Hunt interface courtesy of [Ryan Walker](http://ryanwalker.dev):*
 
 The gods presiding over LambdaMUD Island favor beauty and elegance. Those with particularly aesthetic interfaces might find themselves blessed with mysterious powers throughout the week.
