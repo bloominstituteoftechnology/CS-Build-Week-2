@@ -56,6 +56,21 @@ Test your API key with the init command. You can use this to get all relevant st
 curl -X GET -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' https://lambda-treasure-hunt.herokuapp.com/api/adv/init/
 `
 
+This will return the following response:
+
+```
+{
+  "room_id": 0,
+  "title": "A Dark Room",
+  "description": "You cannot see anything.",
+  "coordinates": "(60,60)",
+  "exits": ["n", "s", "e", "w"],
+  "cooldown": 1.0,
+  "errors": [],
+  "messages": []
+}
+```
+
 ## Movement
 
 All actions are executed via REST API commands to the Lambda Treasure Hunt server. Here is an example movement command:
@@ -124,7 +139,7 @@ Note the new parameter, `next_room_id`. Your map tells you that `room 0` lies so
   "players": [],
   "items": [],
   "exits": ["n", "s", "e", "w"],
-  "cooldown": 30.0,
+  "cooldown": 50.0,
   "errors": [],
   "messages": ["You have walked south.", "Wise Explorer: -50% CD"]
 }
