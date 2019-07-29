@@ -148,6 +148,120 @@ Note the new parameter, `next_room_id`. Your map tells you that `room 0` lies so
 Note the `Wise Explorer` bonus and 50% cooldown reduction.
 
 
+## Treasure
+
+You may have noticed the small treasure lying in the room. You can pick it up with the following command:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"treasure"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/take/
+`
+
+You may drop items with the following command:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"treasure"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/drop/
+`
+
+## Selling Treasure
+
+First, you must find the shop. It's not too far from your starting location. Once you do, you can offer your treasure in exchange for gold.
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"treasure"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/sell/
+`
+
+This will return:
+
+```
+{
+  "room_id": "?",
+  "title": "Shop",
+  "description": "You are standing in a shop. You can sell your treasure here.",
+  "coordinates": "?",
+  "players": [],
+  "items": [],
+  "exits": ["e"],
+  "cooldown": 2.0,
+  "errors": [],
+  "messages": ["I'll give you 100 gold for that Small Treasure.", "(include 'confirm':'yes' to sell Small Treasure)"]
+}
+```
+
+Confirm the sale with the following command:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"treasure", "confirm":"yes"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/sell/
+`
+
+## Status, Inventory
+
+You can check your status and inventory using the following command:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
+`
+
+```
+{
+  "name": "br80",
+  "cooldown": 2.0,
+  "encumbrance": 2,  // How much are you carrying?
+  "strength": 10,  // How much can you carry?
+  "speed": 10,  // How fast do you travel?
+  "gold": 400,
+  "inventory": ["Small Treasure"],
+  "status": [],
+  "errors": [],
+  "messages": []
+}
+```
+
+
+## Examine
+
+You can examine players or items in your room or inventory using this command:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"[NAME OF ITEM OR PLAYER]"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/
+`
+
+
+## Name Changer
+
+You can change your name once you find the name changer using the following command:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"[NEW NAME]"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/
+`
+
+
+## Shrine
+
+If you find a shrine, you may pray at the shrine to earn some new powers:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/
+`
+
+## Flight
+
+Once earning the power of flight, you may use this ability to avoid movement penalties on elevated terrain:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"direction":"n"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/fly/
+`
+
+
+## Dash
+
+Once mastering the dash, you may use this ability to cover many rooms in one direction quickly:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"direction":"n", "num_rooms":"5", "next_room_ids":"10,19,20,63,72"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/dash/
+`
+
+Formatting is very important for these commands: next_room_ids must match every room in a straight line and num_rooms must be the exact count for the dash to work successfully.
+
 
 ## Questions?
 
