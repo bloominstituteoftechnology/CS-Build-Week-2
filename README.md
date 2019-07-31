@@ -225,6 +225,14 @@ You can examine players or items in your room or inventory using this command:
 curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"[NAME OF ITEM OR PLAYER]"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/
 `
 
+## Equipment
+
+Certain items can be worn on either your feet or your body for boosts in speed and/or power. You may wear items with this command:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"[NAME OF WEARABLE]"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/wear/
+`
+
 
 ## Name Changer
 
@@ -262,6 +270,66 @@ curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' 
 
 Formatting is very important for these commands: next_room_ids must match every room in a straight line and num_rooms must be the exact count for the dash to work successfully.
 
+
+
+# Lambda Coins
+
+Once you acquire your true name, you may mine for Lambda Coins using the following API endpoints:
+
+:
+
+
+## Mine
+Submit a proposed proof and your game token to this endpoint to attempt to mine a block.  If successful, you will receive a Lambda Coin.
+
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"proof":"[new_proof]"}' https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/
+`
+
+## Proof
+
+Get the last valid proof to use to mine a new block.  Also returns the current difficulty level, which is the number of `0`'s required at the beginning of the hash for a new proof to be valid.  
+
+`
+curl -X GET -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' https://lambda-treasure-hunt.herokuapp.com/api/bc/last_proof/
+`
+
+```
+{
+  "proof": 123456,
+  "difficulty": 8,
+  "cooldown": 1.0,
+  "messages": [],
+  "errors": []
+}
+```
+
+## Balance
+
+Get your Lambda Coin balance.
+
+`
+curl -X GET -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/
+`
+
+```
+{
+  "proof": 123456,
+  "difficulty": 8,
+  "cooldown": 1.0,
+  "messages": [],
+  "errors": []
+}
+```
+
+## Transmogrify
+
+You can spend your Lambda Coins to transform items into powerful equipment at the transmogrifier using the following command:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"[NAME OF ITEM]"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/transmogrify/
+`
 
 ## Questions?
 
