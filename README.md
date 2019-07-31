@@ -315,11 +315,9 @@ curl -X GET -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' h
 
 ```
 {
-  "proof": 123456,
-  "difficulty": 8,
-  "cooldown": 1.0,
-  "messages": [],
-  "errors": []
+   "cooldown": 1.0,
+   "messages": ["You have a balance of 35.0 Lambda Coins"],
+   "errors": []
 }
 ```
 
