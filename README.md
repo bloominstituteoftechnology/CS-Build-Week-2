@@ -268,7 +268,7 @@ Once you acquire your true name, you may mine for Lambda Coins using the followi
 
 
 ## Mine
-Submit a proposed proof and your game token to this endpoint to attempt to mine a block.  If successful, you will receive a Lambda Coin.
+Submit a proposed proof and your game token to this endpoint to attempt to mine a block.  If successful, you will receive a Lambda Coin. First, you will need to find the appropriate room.
 
 
 `
