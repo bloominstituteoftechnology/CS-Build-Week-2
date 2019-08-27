@@ -11,7 +11,7 @@ class App extends React.Component {
 
     this.state = {
       state: 'state',
-      currentRoom: {}
+      currentRoom: null
     }
   }
 
@@ -28,35 +28,46 @@ class App extends React.Component {
 
     let graph = {}
     let path = []
-    console.log(graph.length, path)
+    // console.log(Object.keys(graph).length)
     // Object.keys(myArray).length
 
     while (Object.keys(graph).length < 500) {
-        console.log(`graph is this long ${graph.length}`)
-        localStorage.setItem('map', JSON.stringify(graph))
+        for (var key in graph) {
+          console.log(`console logging keys ${key}`)
+        }
+        // console.log(`graph is this long ${Object.keys(graph).length}`)
 
         let notExplored = []
 
         const exits = this.state.currentRoom.exits
+        console.log(`exits ${exits}`)
 
         const current = this.state.currentRoom.room_id
+        console.log(`current room ${current}`)
 
-        if (!(current in graph)) {
+        if (!graph[current]) {
             graph[current] = {}
+            console.log(graph[current])
             for (var x in exits) {
                 graph[current][exits[x]] = '?'
             }
+        } else {
+          console.log('this is already in the graph')
         }
         
         for (var room in graph[current]) {
             console.log(room)
             if (graph[current][room] == "?") {
                 notExplored.push(room)
+                console.log(`the not explored array is ${typeof notExplored}`)
             } 
           }
 
         if (notExplored.length > 0) {
+            console.log(`not explored length is ${notExplored}`)
             let nextMove = getRandomDirection(notExplored)
+
+            console.log(`our next move will be ${nextMove}`)
 
             this.movePlayer(nextMove)
 
@@ -112,7 +123,9 @@ class App extends React.Component {
     return path
 }
  
-movePlayer = (direction) => {
+movePlayer = (dir) => {
+
+  console.log(`moving player to the ${dir}`)
 
   const headers = {
     'Content-Type': 'application/json',
@@ -120,7 +133,7 @@ movePlayer = (direction) => {
   }
 
   const data = {
-    direction: 'e'
+    direction: dir
   }
   
   axios(
@@ -170,7 +183,41 @@ startGame = () => {
       <button onClick={this.startGame}>Start Game</button>
       <button onClick={this.movePlayer}>Move Player</button>
       <button onClick={this.makePath}>Start Exploring</button>
+
+      
+
+      {this.state.currentRoom ?
+      <>
+        <h4>You're in {this.state.currentRoom.title}</h4>
+        <h4>And {this.state.currentRoom.description}</h4>
+        <h2>There are exits to the:</h2> 
+         {this.state.currentRoom.exits.map(exit => 
+          <p>{exit}</p>
+        )}
+        <h4>Messages:</h4><p>{this.state.currentRoom.messages}</p>
+        <h4>Cooldown:</h4><p>{this.state.currentRoom.cooldown}</p>  
+        <h4>Errors:</h4><p>{this.state.currentRoom.errors}</p>    
       </>
+      : null
+      }
+     
+
+      <button onClick={()=>this.movePlayer('w')}>Go West</button>
+      <button onClick={()=>this.movePlayer('e')}>Go East</button>
+      <button onClick={()=>this.movePlayer('n')}>Go North</button>
+      <button onClick={()=>this.movePlayer('s')}>Go South</button>
+      </>
+
+// {
+//   "room_id": 0,
+//   "title": "A Dark Room",
+//   "description": "You cannot see anything.",
+//   "coordinates": "(60,60)",
+//   "exits": ["n", "s", "e", "w"],
+//   "cooldown": 1.0,
+//   "errors": [],
+//   "messages": []
+// }
     );
   }
 }
