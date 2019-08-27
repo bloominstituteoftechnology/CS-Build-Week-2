@@ -12,6 +12,7 @@
 * [Where do we mine the coins?](#q800)
 * [Can I get to a specific room without needing to traverse?](#q900)
 * [Do I need to download some kind of hashing package to mine coins?](#q1000)
+* [`pg_config` command not found](#q1100)
 
 <!--
 
@@ -112,3 +113,14 @@ JavaScript: Yes-ish. Recommendations:
 * [node has crypto built-in](https://nodejs.org/api/crypto.html#crypto_crypto)
 
 Swift: No. Use the built-in [SHA256](https://developer.apple.com/documentation/cryptokit/sha256).
+
+<a name="q1100"></a>
+### `pg_config` command not found
+
+If you get this when running `pipenv install`, first do this:
+
+```sh
+export PATH="/Applications/Postgres.app/Contents/Versions/10/bin:$PATH"
+```
+
+then run `pipenv install` again. This should fix it going forward.
