@@ -138,7 +138,20 @@ export function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
   }
     
-
+export const flipDirection = (dir) => {
+    if (dir == 'n'){
+        return 's'
+    }
+    else if (dir =='e'){
+        return 'w'
+    }
+    else if (dir == 's'){
+        return 'n'
+    }
+    else if (dir == 'w'){
+        return 'e'
+    }
+}
 // {
 //     "room_id": 0,
 //     "title": "A Dark Room",

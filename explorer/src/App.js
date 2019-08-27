@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import axios from 'axios'
 
-import { Stack, Queue, getRandomDirection, getRandomInt } from './helpers'
+import { Stack, Queue, getRandomDirection, getRandomInt, flipDirection } from './helpers'
 
 class App extends React.Component {
 
@@ -11,15 +11,22 @@ class App extends React.Component {
 
     this.state = {
       state: 'state',
-      currentRoom: null
+      currentRoom: null,
+      errors: null,
+      graph: {},
+      cooling: false
     }
   }
 
   componentDidMount() {
-    let qoo = new Queue()
-    this.setState({
-      queue: qoo
-    })
+    // let qoo = new Queue()
+    // if (Object.keys(this.state.graph).length < 1 && localStorage.getItem('map')) {
+    //   var map = localStorage.getItem('map')
+    //   this.setState({
+    //     graph: map
+    //   })
+      
+    // }
   }
 
   makePath = () => {
@@ -31,12 +38,11 @@ class App extends React.Component {
     // console.log(Object.keys(graph).length)
     // Object.keys(myArray).length
 
-    while (Object.keys(graph).length < 500) {
-        for (var key in graph) {
-          console.log(`console logging keys ${key}`)
-        }
+    while (Object.keys(this.state.graph).length < 500) {
+        
+        console.log(`the graph's length is ${Object.keys(this.state.graph).length}`)
         // console.log(`graph is this long ${Object.keys(graph).length}`)
-
+        console.log(`Path is ${path}`)
         let notExplored = []
 
         const exits = this.state.currentRoom.exits
@@ -45,21 +51,21 @@ class App extends React.Component {
         const current = this.state.currentRoom.room_id
         console.log(`current room ${current}`)
 
-        if (!graph[current]) {
-            graph[current] = {}
-            console.log(graph[current])
-            for (var x in exits) {
-                graph[current][exits[x]] = '?'
-            }
-        } else {
-          console.log('this is already in the graph')
-        }
+        // if (!graph[current]) {
+        //     graph[current] = {}
+        //     console.log(graph[current])
+        //     for (var x in exits) {
+        //         graph[current][exits[x]] = '?'
+        //     }
+        // } else {
+        //   console.log('this is already in the graph')
+        // }
         
-        for (var room in graph[current]) {
+        for (var room in this.state.graph[current]['exits']) {
             console.log(room)
-            if (graph[current][room] == "?") {
+            if (this.state.graph[current]['exits'][room] == "?") {
                 notExplored.push(room)
-                console.log(`the not explored array is ${typeof notExplored}`)
+                console.log(`the not explored array is ${notExplored}`)
             } 
           }
 
@@ -69,9 +75,15 @@ class App extends React.Component {
 
             console.log(`our next move will be ${nextMove}`)
 
+            // setTimeout(() => {this.movePlayer(nextMove)}, 15001)
             this.movePlayer(nextMove)
+            setTimeout(() => {this.sleep(15001)}, 15001)
 
-            graph[current][nextMove] = this.state.currentRoom.room_id
+    
+
+            // this.movePlayer(nextMove)
+
+            // graph[current][nextMove] = this.state.currentRoom.room_id
             path.push(nextMove)
             notExplored = []
         } else {
@@ -83,11 +95,13 @@ class App extends React.Component {
 
             while (q.size() > 0) {
                 let checkPath = q.dequeue()
+                console.log(`checkpath is ${checkPath}`)
                 let v = checkPath.slice(-1)[0]
-
+                console.log(v)
+                console.log(this.state.graph[v])
 
                 if (!(v in returnPath)) {
-                    let exists = Object.keys(graph[v]).some(function(k) {
+                    let exists = Object.keys(this.state.graph[v]['exits']).some(function(k) {
                         return returnPath[k] === "?";
                     });
                     if (exists == true) {
@@ -95,9 +109,9 @@ class App extends React.Component {
                         break
                     }
                     returnPath.push(v)
-                    for (var way in graph[v]) {
+                    for (var way in this.state.graph[v]['exits']) {
                         let new_path = [...checkPath]
-                        new_path.push(graph[v][way])
+                        new_path.push(this.state.graph[v]['exits'][way])
                         q.enqueue(new_path)
                     }
                 }
@@ -106,14 +120,19 @@ class App extends React.Component {
             let steps = []
 
             for (var i = 0; i < returnPath.length - 1; i++) { 
-                for (var direction in graph[returnPath[i]]) {
-                    if (graph[returnPath[i]][direction] == returnPath[i + 1]) {
+                for (var direction in this.state.graph[returnPath[i]]) {
+                    console.log(`steps loop direction is ${direction}`)
+                    console.log(`returnpath[i] is ${returnPath[i]}`)
+                    if (this.state.graph[returnPath[i]][direction] == returnPath[i + 1]) {
                         steps.push(direction)
                     }
                 }
                 path = path.concat(steps)
                 for (var step in steps) {
-                    this.movePlayer(step)
+                  
+                  this.movePlayer(steps[step])
+                  setTimeout(() => {this.sleep(15001)}, 15001)
+                
                 }
               }
             
@@ -125,7 +144,26 @@ class App extends React.Component {
  
 movePlayer = (dir) => {
 
+
   console.log(`moving player to the ${dir}`)
+
+  var exits = this.state.currentRoom.exits
+  
+  if (!this.state.graph[this.state.currentRoom.room_id]) {
+    this.state.graph[this.state.currentRoom.room_id] = {
+                                                    room_title: '',
+                                                    exits: {}
+                                                  }
+    this.state.graph[this.state.currentRoom.room_id]['room_title'] = this.state.currentRoom.title
+    // console.log(this.state.graph[this.state.currentRoom.room_id])
+    for (var x in exits) {
+      this.state.graph[this.state.currentRoom.room_id]['exits'][exits[x]] = '?'
+    }
+    localStorage.setItem('map', JSON.stringify(this.state.graph))
+  } else {
+    console.log('this is already in the graph')
+  }
+
 
   const headers = {
     'Content-Type': 'application/json',
@@ -147,17 +185,38 @@ movePlayer = (dir) => {
     }
   )
     .then((res) => {
-      console.log(res)
+      console.log(res.data.cooldown * 1000 + 1)
+      this.state.graph[this.state.currentRoom.room_id]['exits'][dir] = res.data.room_id
+      localStorage.setItem('map', JSON.stringify(this.state.graph))
+      // this.state.graph[res.data.room_id][flipDirection(dir)] = this.state.currentRoom.room_id
       this.setState({
-        currentRoom: res.data
+          currentRoom: res.data
+        })
+      
       })
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+      .catch((err) => {
+        console.log('Error thrown', err)
+        this.setState({
+          errors: err.data
+        })
+      })
+    
+}
+
+sleep = (milliseconds) => {
+  console.log(`sleeping for ${milliseconds}`)
+  // return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
 startGame = () => {
+
+  if (localStorage.getItem('map')) {
+    var map = JSON.parse(localStorage.getItem('map'))
+    this.setState({
+      graph: map
+    })
+    
+  }
 
   const headers = {
     'Authorization': 'Token 314369d39e5bdc8abb7f7c40689cb34de2d56669'
@@ -167,9 +226,27 @@ startGame = () => {
     .get('https://lambda-treasure-hunt.herokuapp.com/api/adv/init/', {headers})
     .then((res) => {
       console.log(res)
-      this.setState({
-        currentRoom: res.data
-      })
+      var exits = res.data.exits
+      var starterGraph = {[res.data.room_id]: {
+                                        room_title: res.data.title,
+                                        exits: {}
+                                      }}
+
+      for (var x in exits) {
+        console.log(starterGraph, exits[x])
+        starterGraph[res.data.room_id]['exits'][exits[x]] = '?'
+    }
+
+    this.setState({
+      currentRoom: res.data,
+    })
+    console.log(starterGraph)
+      if (Object.keys(this.state.graph).length < 1) {
+        this.setState({
+          graph: starterGraph
+        })
+        localStorage.setItem('map', JSON.stringify(this.state.graph))
+      }
     })
     .catch((err) => {
       console.log(err)
@@ -188,7 +265,7 @@ startGame = () => {
 
       {this.state.currentRoom ?
       <>
-        <h4>You're in {this.state.currentRoom.title}</h4>
+        <h4>You're in room {this.state.currentRoom.room_id} with the title {this.state.currentRoom.title}</h4>
         <h4>And {this.state.currentRoom.description}</h4>
         <h2>There are exits to the:</h2> 
          {this.state.currentRoom.exits.map(exit => 
@@ -196,11 +273,19 @@ startGame = () => {
         )}
         <h4>Messages:</h4><p>{this.state.currentRoom.messages}</p>
         <h4>Cooldown:</h4><p>{this.state.currentRoom.cooldown}</p>  
-        <h4>Errors:</h4><p>{this.state.currentRoom.errors}</p>    
       </>
       : null
       }
-     
+     {this.state.errors ?
+     <div>
+        <h4>Errors:</h4>
+        {this.state.errors.errors.map(err => 
+          <p>{err}</p>
+        )}
+        <p>{this.state.errors.cooldown}</p> 
+        </div>
+      : null
+      }
 
       <button onClick={()=>this.movePlayer('w')}>Go West</button>
       <button onClick={()=>this.movePlayer('e')}>Go East</button>
