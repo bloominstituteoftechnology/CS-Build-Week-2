@@ -59,8 +59,23 @@ class App extends React.Component {
         //     }
         // } else {
         //   console.log('this is already in the graph')
-        // }
+        // }  
+        if (!this.state.graph[this.state.currentRoom.room_id]) {
+          this.state.graph[this.state.currentRoom.room_id] = {
+                                                          room_title: '',
+                                                          exits: {}
+                                                        }
+          this.state.graph[this.state.currentRoom.room_id]['room_title'] = this.state.currentRoom.title
+          // console.log(this.state.graph[this.state.currentRoom.room_id])
+          for (var x in exits) {
+            this.state.graph[this.state.currentRoom.room_id]['exits'][exits[x]] = '?'
+          }
+          localStorage.setItem('map', JSON.stringify(this.state.graph))
+        } else {
+          console.log('this is already in the graph')
+        }
         
+        console.log(this.state.graph[current])
         for (var room in this.state.graph[current]['exits']) {
             console.log(room)
             if (this.state.graph[current]['exits'][room] == "?") {
@@ -77,7 +92,8 @@ class App extends React.Component {
 
             // setTimeout(() => {this.movePlayer(nextMove)}, 15001)
             this.movePlayer(nextMove)
-            setTimeout(() => {this.sleep(15001)}, 15001)
+            // .then(setTimeout(() => console.log('sleeping'), 15001)).catch(err => console.log(err))
+            // setTimeout(() => {this.sleep(15001)}, 15001)
 
     
 
@@ -130,8 +146,11 @@ class App extends React.Component {
                 path = path.concat(steps)
                 for (var step in steps) {
                   
+                  // this.movePlayer(steps[step])
                   this.movePlayer(steps[step])
-                  setTimeout(() => {this.sleep(15001)}, 15001)
+                  // this.sleep(10001)
+
+                  // .then(setTimeout(() => console.log('sleeping'), 15001))
                 
                 }
               }
@@ -174,6 +193,7 @@ movePlayer = (dir) => {
     direction: dir
   }
   
+  // return new Promise((resolve, reject) => {
   axios(
     {
       method: 'post', //you can set what request you want to be
@@ -185,27 +205,34 @@ movePlayer = (dir) => {
     }
   )
     .then((res) => {
-      console.log(res.data.cooldown * 1000 + 1)
+      console.log('Made my API request')
       this.state.graph[this.state.currentRoom.room_id]['exits'][dir] = res.data.room_id
       localStorage.setItem('map', JSON.stringify(this.state.graph))
       // this.state.graph[res.data.room_id][flipDirection(dir)] = this.state.currentRoom.room_id
+      
       this.setState({
           currentRoom: res.data
         })
-      
+        this.sleep(10001)
+        console.log(`current room is ${this.state.currentRoom.room_id}`)
+        
+      // resolve(res)
+
       })
       .catch((err) => {
         console.log('Error thrown', err)
+        // reject(err)
         this.setState({
           errors: err.data
         })
       })
-    
-}
+  }
+// }
 
-sleep = (milliseconds) => {
-  console.log(`sleeping for ${milliseconds}`)
-  // return new Promise(resolve => setTimeout(resolve, milliseconds))
+sleep = (delay) => {
+  console.log(`sleeping for ${delay} seconds`)
+    var start = new Date().getTime();
+    while (new Date().getTime() < start + delay);
 }
 
 startGame = () => {
@@ -272,7 +299,11 @@ startGame = () => {
           <p>{exit}</p>
         )}
         <h4>Messages:</h4><p>{this.state.currentRoom.messages}</p>
-        <h4>Cooldown:</h4><p>{this.state.currentRoom.cooldown}</p>  
+        <h4>Cooldown:</h4><p>{this.state.currentRoom.cooldown}</p> 
+        <h4>Treasure:</h4>
+        {this.state.currentRoom.items.map(item => 
+          <p>{item}</p>
+        )}
       </>
       : null
       }
