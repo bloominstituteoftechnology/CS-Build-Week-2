@@ -13,6 +13,7 @@
 * [Can I get to a specific room without needing to traverse?](#q900)
 * [Do I need to download some kind of hashing package to mine coins?](#q1000)
 * [`pg_config` command not found](#q1100)
+* [What's the title of the blockchain miner room?](#q1200)
 
 <!--
 
@@ -146,3 +147,9 @@ export PATH="/Applications/Postgres.app/Contents/Versions/10/bin:$PATH"
 then run `pipenv install` again. This should fix it going forward.
 
 ---------------------------------------------------------------------------------------
+
+<a name="q1200"></a>
+### What's the title of the blockchain miner room?
+
+Nothing special--it's just a generic name. See [Where do we mine the
+coins?](#q800)
