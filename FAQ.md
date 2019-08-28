@@ -14,6 +14,7 @@
 * [Do I need to download some kind of hashing package to mine coins?](#q1000)
 * [`pg_config` command not found](#q1100)
 * [What's the title of the blockchain miner room?](#q1200)
+* [How many rooms are there?](#q1300)
 
 <!--
 
@@ -153,3 +154,9 @@ then run `pipenv install` again. This should fix it going forward.
 
 Nothing special--it's just a generic name. See [Where do we mine the
 coins?](#q800)
+
+---------------------------------------------------------------------------------------
+
+### How many rooms are there?
+
+There are 500 rooms/nodes/vertexes.
