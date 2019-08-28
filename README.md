@@ -264,20 +264,22 @@ Formatting is very important for these commands: next_room_ids must match every 
 
 Once you acquire your true name, you may mine for Lambda Coins using the following API endpoints:
 
-:
-
 
 ## Mine
 Submit a proposed proof and your game token to this endpoint to attempt to mine a block.  If successful, you will receive a Lambda Coin. First, you will need to find the appropriate room.
 
 
 `
-curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"proof":"[new_proof]"}' https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"proof":new_proof}' https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/
 `
 
 ## Proof
 
 Get the last valid proof to use to mine a new block.  Also returns the current difficulty level, which is the number of `0`'s required at the beginning of the hash for a new proof to be valid.  
+
+The proof of work algorithm for this blockchain is not the same as we used in class. It uses a different method:
+
+Does hash(last_proof, proof) contain N leading zeroes, where N is the current difficulty level?
 
 `
 curl -X GET -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' https://lambda-treasure-hunt.herokuapp.com/api/bc/last_proof/
