@@ -18,28 +18,36 @@
 
 -->
 
-## Questions
+## Answers
 
 <a name="q100"></a>
 ### You're seeing this error because you have `DEBUG = True` in your Django settings file
 
 That's not really the error. Look up at the top of the output for the actual error.
 
+---------------------------------------------------------------------------------------
+
 <a name="q200"></a>
 ### What happens if we use the wrong next room ID for the wise explorer bonus?
 
 Try it and see!
+
+---------------------------------------------------------------------------------------
 
 <a name="q300"></a>
 ### If we get `cooldown X` in our response, does that mean we have to wait X seconds before the next request?
 
 Yes.
 
+---------------------------------------------------------------------------------------
+
 <a name="q400"></a>
 ### Does the treasure disappear after someone picks it up?
 
 Yes. Once they sell the treasure, it will respawn in a random room somewhere
 else on the map, so the treasures should never run out.
+
+---------------------------------------------------------------------------------------
 
 <a name="q500"></a>
 ### I'm getting CORS errors hitting the server with axios
@@ -53,6 +61,8 @@ post("URL", foo, {
    headers: { Authorization: "Bearer " + token }
 })
 ```
+
+---------------------------------------------------------------------------------------
 
 <a name="q600"></a>
 ### I'm getting a huge error/something about `ssl` when installing `psycopg2` with `pipenv install`
@@ -84,10 +94,14 @@ sudo ln -s /usr/local/lib/libcrypto.1.0.0.dylib /usr/local/lib/libcrypto.dylib
 
 then try `pipenv install` again.
 
+---------------------------------------------------------------------------------------
+
 <a name="q700"></a>
 ### Where is Pirate Ry?
 
 In the room that has `Pirate Ry` in its title.
+
+---------------------------------------------------------------------------------------
 
 <a name="q800"></a>
 ### Where do we mine the coins?
@@ -96,10 +110,14 @@ Once you've changed your name, reach out to your TL and they'll tell you the
 next step. It'll be an interview, and once you've passed that, you'll get a hint
 to where the mining room is.
 
+---------------------------------------------------------------------------------------
+
 <a name="q900"></a>
 ### Can I get to a specific room without needing to traverse?
 
 Barring any aquired special powers, no.
+
+---------------------------------------------------------------------------------------
 
 <a name="q1000"></a>
 ### Do I need to download some kind of hashing package to mine coins?
@@ -114,6 +132,8 @@ JavaScript: Yes-ish. Recommendations:
 
 Swift: No. Use the built-in [SHA256](https://developer.apple.com/documentation/cryptokit/sha256).
 
+---------------------------------------------------------------------------------------
+
 <a name="q1100"></a>
 ### `pg_config` command not found
 
@@ -124,3 +144,5 @@ export PATH="/Applications/Postgres.app/Contents/Versions/10/bin:$PATH"
 ```
 
 then run `pipenv install` again. This should fix it going forward.
+
+---------------------------------------------------------------------------------------
