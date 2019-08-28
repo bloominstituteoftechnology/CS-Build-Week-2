@@ -264,8 +264,6 @@ Formatting is very important for these commands: next_room_ids must match every 
 
 Once you acquire your true name, you may mine for Lambda Coins using the following API endpoints:
 
-:
-
 
 ## Mine
 Submit a proposed proof and your game token to this endpoint to attempt to mine a block.  If successful, you will receive a Lambda Coin. First, you will need to find the appropriate room.
