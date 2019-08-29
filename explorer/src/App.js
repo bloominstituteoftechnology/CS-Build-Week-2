@@ -14,7 +14,8 @@ class App extends React.Component {
       currentRoom: null,
       errors: null,
       graph: {},
-      cooling: false
+      cooling: false,
+      lastRoom: null
     }
   }
 
@@ -38,10 +39,10 @@ class App extends React.Component {
     // console.log(Object.keys(graph).length)
     // Object.keys(myArray).length
 
-    while (Object.keys(this.state.graph).length < 500) {
+    // while (Object.keys(this.state.graph).length < 500) {
+    while (this.state.currentRoom.room_id !== 250) {
         
         console.log(`the graph's length is ${Object.keys(this.state.graph).length}`)
-        // console.log(`graph is this long ${Object.keys(graph).length}`)
         console.log(`Path is ${path}`)
         let notExplored = []
 
@@ -51,25 +52,24 @@ class App extends React.Component {
         const current = this.state.currentRoom.room_id
         console.log(`current room ${current}`)
 
-        // if (!graph[current]) {
-        //     graph[current] = {}
-        //     console.log(graph[current])
-        //     for (var x in exits) {
-        //         graph[current][exits[x]] = '?'
-        //     }
-        // } else {
-        //   console.log('this is already in the graph')
-        // }  
         if (!this.state.graph[this.state.currentRoom.room_id]) {
-          this.state.graph[this.state.currentRoom.room_id] = {
-                                                          room_title: '',
-                                                          exits: {}
-                                                        }
-          this.state.graph[this.state.currentRoom.room_id]['room_title'] = this.state.currentRoom.title
-          // console.log(this.state.graph[this.state.currentRoom.room_id])
-          for (var x in exits) {
-            this.state.graph[this.state.currentRoom.room_id]['exits'][exits[x]] = '?'
+
+          let newRoom = {
+            room_title: '',
+            exits: {}
           }
+          newRoom['room_title'] = this.state.currentRoom.title
+          for (var x in exits) {
+            newRoom['exits'][exits[x]] = '?'
+          }
+          
+          this.setState({
+            graph: {
+              ...this.state.graph,
+              [current]: newRoom 
+                }
+          })
+
           localStorage.setItem('map', JSON.stringify(this.state.graph))
         } else {
           console.log('this is already in the graph')
@@ -84,78 +84,67 @@ class App extends React.Component {
             } 
           }
 
-        if (notExplored.length > 0) {
-            console.log(`not explored length is ${notExplored}`)
-            let nextMove = getRandomDirection(notExplored)
+        let nextMove = getRandomDirection(notExplored)  
+        this.movePlayer(nextMove)
 
-            console.log(`our next move will be ${nextMove}`)
+    //     if (notExplored.length > 0) {
+    //         console.log(`not explored length is ${notExplored.length}`)
+    //         let nextMove = getRandomDirection(notExplored)
 
-            // setTimeout(() => {this.movePlayer(nextMove)}, 15001)
-            this.movePlayer(nextMove)
-            // .then(setTimeout(() => console.log('sleeping'), 15001)).catch(err => console.log(err))
-            // setTimeout(() => {this.sleep(15001)}, 15001)
+    //         console.log(`our next move will be ${nextMove}`)
 
-    
-
-            // this.movePlayer(nextMove)
-
-            // graph[current][nextMove] = this.state.currentRoom.room_id
-            path.push(nextMove)
-            notExplored = []
-        } else {
-            let q = new Queue()
-            q.enqueue([current])
-
-            let checked = []
-            let returnPath = []
-
-            while (q.size() > 0) {
-                let checkPath = q.dequeue()
-                console.log(`checkpath is ${checkPath}`)
-                let v = checkPath.slice(-1)[0]
-                console.log(v)
-                console.log(this.state.graph[v])
-
-                if (!(v in returnPath)) {
-                    let exists = Object.keys(this.state.graph[v]['exits']).some(function(k) {
-                        return returnPath[k] === "?";
-                    });
-                    if (exists == true) {
-                        returnPath = checkPath
-                        break
-                    }
-                    returnPath.push(v)
-                    for (var way in this.state.graph[v]['exits']) {
-                        let new_path = [...checkPath]
-                        new_path.push(this.state.graph[v]['exits'][way])
-                        q.enqueue(new_path)
-                    }
-                }
-            }
-
-            let steps = []
-
-            for (var i = 0; i < returnPath.length - 1; i++) { 
-                for (var direction in this.state.graph[returnPath[i]]) {
-                    console.log(`steps loop direction is ${direction}`)
-                    console.log(`returnpath[i] is ${returnPath[i]}`)
-                    if (this.state.graph[returnPath[i]][direction] == returnPath[i + 1]) {
-                        steps.push(direction)
-                    }
-                }
-                path = path.concat(steps)
-                for (var step in steps) {
-                  
-                  // this.movePlayer(steps[step])
-                  this.movePlayer(steps[step])
-                  // this.sleep(10001)
-
-                  // .then(setTimeout(() => console.log('sleeping'), 15001))
-                
-                }
-              }
+    //         this.movePlayer(nextMove)
             
-        }
+    //         path.push(nextMove)
+    //         notExplored = []
+    //     } else {
+    //         let q = new Queue()
+    //         q.enqueue([current])
+
+    //         let checked = []
+    //         let returnPath = []
+
+    //         while (q.size() > 0) {
+    //             let checkPath = q.dequeue()
+    //             console.log(`checkpath is ${checkPath}`)
+    //             let v = checkPath.slice(-1)[0]
+    //             console.log(v)
+    //             console.log(this.state.graph[v])
+
+    //             if (!(v in returnPath)) {
+    //                 let exists = Object.keys(this.state.graph[v]['exits']).some(function(k) {
+    //                     return returnPath[k] === "?";
+    //                 });
+    //                 if (exists == true) {
+    //                     returnPath = checkPath
+    //                     break
+    //                 }
+    //                 returnPath.push(v)
+    //                 for (var way in this.state.graph[v]['exits']) {
+    //                     let new_path = [...checkPath]
+    //                     new_path.push(this.state.graph[v]['exits'][way])
+    //                     q.enqueue(new_path)
+    //                 }
+    //             }
+    //         }
+
+    //         let steps = []
+
+    //         for (var i = 0; i < returnPath.length - 1; i++) { 
+    //             for (var direction in this.state.graph[returnPath[i]]) {
+    //                 console.log(`steps loop direction is ${direction}`)
+    //                 console.log(`returnpath[i] is ${returnPath[i]}`)
+    //                 if (this.state.graph[returnPath[i]][direction] == returnPath[i + 1]) {
+    //                     steps.push(direction)
+    //                 }
+    //             }
+    //             path = path.concat(steps)
+    //             for (var step in steps) {
+                  
+    //               this.movePlayer(steps[step])
+    //             }
+    //           }       
+    //     }
     }
 
     return path
@@ -167,22 +156,42 @@ movePlayer = (dir) => {
   console.log(`moving player to the ${dir}`)
 
   var exits = this.state.currentRoom.exits
-  
-  if (!this.state.graph[this.state.currentRoom.room_id]) {
-    this.state.graph[this.state.currentRoom.room_id] = {
-                                                    room_title: '',
-                                                    exits: {}
-                                                  }
-    this.state.graph[this.state.currentRoom.room_id]['room_title'] = this.state.currentRoom.title
-    // console.log(this.state.graph[this.state.currentRoom.room_id])
-    for (var x in exits) {
-      this.state.graph[this.state.currentRoom.room_id]['exits'][exits[x]] = '?'
-    }
-    localStorage.setItem('map', JSON.stringify(this.state.graph))
-  } else {
-    console.log('this is already in the graph')
-  }
 
+  let newRoom = {
+    room_title: '',
+    exits: {}
+  }
+  newRoom['room_title'] = this.state.currentRoom.title
+
+    for (var x in exits) {
+      newRoom['exits'][exits[x]] = '?'
+    }
+    
+    this.setState({
+      graph: {
+        ...this.state.graph,
+        [this.state.currentRoom.room_id]: newRoom 
+          }
+    })
+
+    localStorage.setItem('map', JSON.stringify(this.state.graph))
+  
+  // if (!this.state.graph[this.state.currentRoom.room_id]) {
+  //   this.state.graph[this.state.currentRoom.room_id] = {
+  //                                                   room_title: '',
+  //                                                   exits: {}
+  //                                                 }
+  //   this.state.graph[this.state.currentRoom.room_id]['room_title'] = this.state.currentRoom.title
+  //   // console.log(this.state.graph[this.state.currentRoom.room_id])
+  //   for (var x in exits) {
+  //     this.state.graph[this.state.currentRoom.room_id]['exits'][exits[x]] = '?'
+  //   }
+  //   localStorage.setItem('map', JSON.stringify(this.state.graph))
+  // } else {
+  //   console.log('this is already in the graph')
+  // }
+
+  this.sleep(10001)
 
   const headers = {
     'Content-Type': 'application/json',
@@ -192,9 +201,12 @@ movePlayer = (dir) => {
   const data = {
     direction: dir
   }
+
+  console.log(`data is ${data.direction} ${typeof data.direction}`)
   
   // return new Promise((resolve, reject) => {
   axios(
+
     {
       method: 'post', //you can set what request you want to be
       url: 'https://lambda-treasure-hunt.herokuapp.com/api/adv/move/',
@@ -206,14 +218,22 @@ movePlayer = (dir) => {
   )
     .then((res) => {
       console.log('Made my API request')
-      this.state.graph[this.state.currentRoom.room_id]['exits'][dir] = res.data.room_id
+
+      console.log(`resetting ${this.state.graph[this.state.currentRoom.room_id]['exits'][dir]} to ${res.data.room_id}`)
+      this.setState({
+        graph: {
+          ...this.state.graph, 
+          [this.state.graph[this.state.currentRoom.room_id]['exits'][dir]]: [res.data.room_id],
+          // [this.state.graph[res.data.room_id][flipDirection(dir)]] : this.state.currentRoom.room_id
+        }
+      })
+      // this.state.graph[this.state.currentRoom.room_id]['exits'][dir] = res.data.room_id
       localStorage.setItem('map', JSON.stringify(this.state.graph))
-      // this.state.graph[res.data.room_id][flipDirection(dir)] = this.state.currentRoom.room_id
+      
       
       this.setState({
           currentRoom: res.data
         })
-        this.sleep(10001)
         console.log(`current room is ${this.state.currentRoom.room_id}`)
         
       // resolve(res)
