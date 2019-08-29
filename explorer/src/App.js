@@ -3,6 +3,7 @@ import './App.css';
 import axios from 'axios'
 
 import { Stack, Queue, getRandomDirection, getRandomInt, flipDirection } from './helpers'
+import { get_proof } from './miner'
 
 class App extends React.Component {
 
@@ -15,7 +16,8 @@ class App extends React.Component {
       errors: null,
       graph: {},
       cooling: false,
-      lastRoom: null
+      lastRoom: null,
+      
     }
   }
 
@@ -220,10 +222,11 @@ movePlayer = (dir) => {
       console.log('Made my API request')
 
       console.log(`resetting ${this.state.graph[this.state.currentRoom.room_id]['exits'][dir]} to ${res.data.room_id}`)
+      const data = 
       this.setState({
         graph: {
           ...this.state.graph, 
-          [this.state.graph[this.state.currentRoom.room_id]['exits'][dir]]: [res.data.room_id],
+          // this.state.graph[this.state.currentRoom.room_id]['exits'][dir]: [res.data.room_id],
           // [this.state.graph[res.data.room_id][flipDirection(dir)]] : this.state.currentRoom.room_id
         }
       })
@@ -342,6 +345,9 @@ startGame = () => {
       <button onClick={()=>this.movePlayer('e')}>Go East</button>
       <button onClick={()=>this.movePlayer('n')}>Go North</button>
       <button onClick={()=>this.movePlayer('s')}>Go South</button>
+
+
+      <button onClick={get_proof}>Get Proof</button>
       </>
 
 // {
