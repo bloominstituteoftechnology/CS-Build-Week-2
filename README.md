@@ -34,7 +34,7 @@ The map is laid out in a grid: Similar to your worlds from Week 1 of your CS tra
 
 ## Cooldown
 
-Your access to the server is restricted until you earn more power. Starting off, you are only allowed to make one request every 60 seconds. Sending another request before that time has elapsed will incur a penalty.
+Your access to the server is restricted until you earn more power. Starting off, you are only allowed to make one request every 15 seconds. Sending another request before that time has elapsed will incur a penalty. The cooldown may decrease as the days wear on - make sure to keep an eye on your cohort's channel for important updates.
 
 ## Initialization
 
@@ -107,6 +107,8 @@ This room has an ID of 10 and contains exits to the north, south and west. Now, 
 
 There are a total of 500 rooms so be thoughtful about how you traverse the map. Note that you begin the hunt blind but will gain new powers as the hunt progresses.
 
+***You will be able to progress with future tasks much more quickly if you log ALL room info during your initial traversal / map building (not just room numbers & exits)***
+
 
 ## Wise Explorer
 
@@ -149,6 +151,8 @@ You may drop items with the following command:
 `
 curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"treasure"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/drop/
 `
+
+Note to collect enough treasure for later tasks, you'll want to automate the process of traversing the graph (once your map is complete) and picking up treasure
 
 ## Selling Treasure
 
@@ -230,6 +234,7 @@ You can change your name once you find the name changer using the following comm
 curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"[NEW NAME]"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/
 `
 
+Without changing your name, you will be unable to mine Lambda Coins. Changing your name will require 1000 gold, so make sure you get started on collecting treasure early on.
 
 ## Shrine
 
@@ -277,7 +282,9 @@ curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' 
 
 # Lambda Coins
 
-Once you acquire your true name, you may mine for Lambda Coins using the following API endpoints:
+Once you acquire your true name, you are eligible to complete the Turtle Programming Interview Challenge with your TL. Once you have demonstrated a correct solution, you will be rewarded with an important clue to the mining location. Schedule this with your TL as soon as you reach this point.
+
+You may mine for Lambda Coins using the following API endpoints:
 
 
 ## Mine
