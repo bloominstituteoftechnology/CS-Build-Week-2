@@ -6,7 +6,6 @@ For your second CS Build Week, you and a small team will be competing against yo
 
 Mine one Lambda Coin. That's it.
 
-
 ## Overview
 
 You start the adventure unworthy, unequipped and anonymous. Your first task is to traverse the island and build a map for your personal use. Along the way, you will discover equipment, treasure and clues which will assist you on your quest for power, wealth and glory.
