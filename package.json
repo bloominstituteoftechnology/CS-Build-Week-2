@@ -1,0 +1,8 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/BryceEvans/CS-Build-Week-2.git",
+  "author": "Phinehas <kohler.nai@gmail.com>",
+  "license": "MIT"
+}
