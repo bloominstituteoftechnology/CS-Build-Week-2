@@ -49,41 +49,80 @@ for (let c in roomGraph) {
     islandMap.push(room)
 }
 
+
+
+let start = islandMap.filter(loc => loc.room_id === "7")
+
+let previousRoom = ''
+let currentRoom = start[0]
+let visitedRoutes = []
+
+const knownLocations = [currentRoom]
+
 class Island extends Component {
   constructor(){
     super();
-    this.state = {color:[Math.random()*255, Math.random()*255, Math.random()*255]};
-    this.randomColor = this.randomColor.bind(this);
+    this.state = {
+      currentRoom: '7'
+    };
   }
 
-  randomColor(){
-    this.setState({color:[Math.random()*255, Math.random()*255, Math.random()*255]}
-    )
+  change = (roomN) => {
+    this.setState({currentRoom: roomN})
   }
+
 
 
   sketch(p){
     let canvas;
 
-    function treasureMap() {
-        let x = 50;
-        for (let i = 0; i < islandMap.length; i++) {
 
-            p.ellipseMode(p.RADIUS)
-            p.fill('#ffff');
-            p.stroke(10);
-            p.strokeWeight(0);
-            p.ellipse(islandMap[i].coordinates[0]*60, islandMap[i].coordinates[1]*60, 25, 25);
-
-    
-            p.noStroke()
-            p.textSize(16);
-            p.fill(0, 102, 153);
-            p.textAlign(p.CENTER)
-            p.text(islandMap[i].room_id, islandMap[i].coordinates[0]*60, islandMap[i].coordinates[1]*60+5)
-            x+=100
+    function connections() {
+      let temp = [previousRoom.coordinates[0]*60, (1999 - previousRoom.coordinates[1]*60), currentRoom.coordinates[0]*60, (1999 -  currentRoom.coordinates[1]*60)]
+      let zero = visitedRoutes.filter(visit => JSON.stringify(visit) === JSON.stringify(temp))
+      console.log('zero', zero.length)
+      if (zero.length === 0) {
+        visitedRoutes.push(temp)
+      }
+        for (let i = 0;i<visitedRoutes.length;i++) {
+          p.stroke("blue")
+          p.strokeWeight(10)
+          p.line(visitedRoutes[i][0], visitedRoutes[i][1], visitedRoutes[i][2], visitedRoutes[i][3])
         }
+
     }
+
+    function treasureMap() {
+      for (let i = 0; i < knownLocations.length; i++) {
+
+        if (knownLocations[i].room_id === currentRoom.room_id) {
+          p.noStroke()
+          p.ellipseMode(p.RADIUS)
+          p.fill('aqua');
+          p.ellipse(knownLocations[i].coordinates[0]*60, (1999 - knownLocations[i].coordinates[1]*60), 25, 25);
+        }
+        else {
+          p.noStroke()
+          p.ellipseMode(p.RADIUS)
+          p.fill('#ffff');
+          p.ellipse(knownLocations[i].coordinates[0]*60, (1999 - knownLocations[i].coordinates[1]*60), 25, 25);
+        }
+        
+      }
+  }
+
+  function words() {
+
+    for (let i = 0; i < knownLocations.length; i++) {
+        p.noStroke()
+        p.textSize(16);
+        p.fill(0, 102, 153);
+        p.textAlign(p.CENTER)
+        p.text(knownLocations[i].room_id, knownLocations[i].coordinates[0]*60, (1999 - knownLocations[i].coordinates[1]*60)+5)
+    }
+  }
+
+
 
     p.setup = () => {
       canvas = p.createCanvas(1500, 2000);
@@ -92,9 +131,57 @@ class Island extends Component {
 
     p.draw = () => {
       p.background('tan');
+      if (previousRoom !== '') {
+        connections()
+      }
       treasureMap()
-
+      words()
     }
+
+    p.keyPressed = () => {
+      let current = knownLocations.filter(room => room.room_id === currentRoom.room_id)
+
+      if (p.keyCode === p.DOWN_ARROW && current[0]["exits"]["s"] !== undefined) {
+        previousRoom = Object.assign(currentRoom)
+        const nextRoom = islandMap.filter(loc => loc.room_id === String(current[0]["exits"]["s"]))
+        knownLocations.push(nextRoom[0])
+        currentRoom = nextRoom[0]
+
+        p.redraw(1)
+      }
+
+      else if (p.keyCode === p.UP_ARROW && current[0]["exits"]["n"] !== undefined) {
+        previousRoom = Object.assign(currentRoom)
+        const nextRoom = islandMap.filter(loc => loc.room_id === String(current[0]["exits"]["n"]))
+        knownLocations.push(nextRoom[0])
+        currentRoom = nextRoom[0]
+
+        p.redraw(1)
+
+      }
+
+      else if (p.keyCode === p.LEFT_ARROW && current[0]["exits"]["w"] !== undefined) {
+        previousRoom = Object.assign(currentRoom)
+        const nextRoom = islandMap.filter(loc => loc.room_id === String(current[0]["exits"]["w"]))
+        knownLocations.push(nextRoom[0])
+        currentRoom = nextRoom[0]
+        p.redraw(1)
+      }
+
+      else if (p.keyCode === p.RIGHT_ARROW && current[0]["exits"]["e"] !== undefined) {
+        previousRoom = Object.assign(currentRoom)
+        const nextRoom = islandMap.filter(loc => loc.room_id === String(current[0]["exits"]["e"]))
+        knownLocations.push(nextRoom[0])
+        currentRoom = nextRoom[0]
+
+        p.redraw(1)
+      }
+
+      else {
+        console.log("No direction exists!")
+      }
+    }
+
 
     p.myCustomRedrawAccordingToNewPropsHandler = (newProps) => {
       if(canvas) //Make sure the canvas has been created
@@ -105,7 +192,10 @@ class Island extends Component {
   render() {
     return (
       <div>
-        <P5Wrapper sketch={this.sketch} color={this.state.color}></P5Wrapper>
+      <h1>{this.state.currentRoom}</h1>
+      <div className="flip">
+      <P5Wrapper sketch={this.sketch} color={this.state.color}></P5Wrapper>
+      </div>
       </div>
     );
   }
