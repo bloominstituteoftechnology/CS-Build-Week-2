@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import P5Wrapper from 'react-p5-wrapper';
 import './App.css';
+import p5 from 'p5'
+import "p5/lib/addons/p5.dom";
+import "p5/lib/addons/p5.sound";
+
 
 // {
 //     "room_id": 0,
@@ -80,7 +84,7 @@ class Island extends Component {
     function connections() {
       let temp = [previousRoom.coordinates[0]*60, (1999 - previousRoom.coordinates[1]*60), currentRoom.coordinates[0]*60, (1999 -  currentRoom.coordinates[1]*60)]
       let zero = visitedRoutes.filter(visit => JSON.stringify(visit) === JSON.stringify(temp))
-      console.log('zero', zero.length)
+      console.log('zero')
       if (zero.length === 0) {
         visitedRoutes.push(temp)
       }
@@ -121,12 +125,13 @@ class Island extends Component {
         p.text(knownLocations[i].room_id, knownLocations[i].coordinates[0]*60, (1999 - knownLocations[i].coordinates[1]*60)+5)
     }
   }
+  
 
-
-
+  let dom;
     p.setup = () => {
       canvas = p.createCanvas(1500, 2000);
       p.noStroke();
+      dom = p.select('.hello')
     }
 
     p.draw = () => {
@@ -134,8 +139,16 @@ class Island extends Component {
       if (previousRoom !== '') {
         connections()
       }
+      p.noStroke()
+      p.textSize(40)
+      p.text(`current room: ${currentRoom.room_id}`,750, 100)
+      p.noStroke()
+      p.textSize(40)
+      p.text(`previous room: ${previousRoom.room_id}`,300, 100)
+
       treasureMap()
       words()
+      dom.html(currentRoom.room_id)
     }
 
     p.keyPressed = () => {
@@ -192,7 +205,7 @@ class Island extends Component {
   render() {
     return (
       <div>
-      <h1>{this.state.currentRoom}</h1>
+      <h1 className='hello'>{this.state.currentRoom}</h1>
       <div className="flip">
       <P5Wrapper sketch={this.sketch} color={this.state.color}></P5Wrapper>
       </div>
