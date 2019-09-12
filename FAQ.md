@@ -15,6 +15,12 @@
 * [`pg_config` command not found](#q1100)
 * [What's the title of the blockchain miner room?](#q1200)
 * [How many rooms are there?](#q1300)
+* [Are we expected to have a backend? Are we expected to store any information in a database?](#q1400)
+* [There is mention of a "weight" of items, but the weights aren't a part of the data. How do we know what the weight is that we are about to accept before we try to pick up an item?](#q1500)
+* [It seems that requests such as moving, picking up items, selling, etc are governed by the cooldown period. Is a status check on our individual user counted in that?](#q1600)
+* [If we pair program and another teammate types it up and pushes it, will that affect our scores for this sprint?](#q1700)
+* [What responses can we expect to receive after sumbitting a `mine` request?](#q1800)
+
 
 <!--
 
@@ -157,6 +163,48 @@ coins?](#q800)
 
 ---------------------------------------------------------------------------------------
 
+<a name="q1300"></a>
 ### How many rooms are there?
 
 There are 500 rooms/nodes/vertexes.
+
+---------------------------------------------------------------------------------------
+
+<a name="q1400"></a>
+### Are we expected to have a backend? Are we expected to store any information in a database?
+
+You will want to store the graph somewhere after you have everything mapped out. And not just rooms #s & what room you'll get to moving `n`, `s`, `e`, `w`, but also name & other attributes.
+
+After you have the graph mapped out, you'll want to smartly wander around, collecting treasure. Your player can only carry so much treasure, because they are human, so periodically  you'll have to sell it. Once enough treasure has been collected, you can exchange it for the True Name you'll need to mine Lambda Coins.
+
+Any information you can't directly request from the server (ex. complete map of the island), you'll want your application to keep track of. How you do that is up to you.
+
+---------------------------------------------------------------------------------------
+
+<a name="q1500"></a>
+### There is mention of a "weight" of items, but the weights aren't a part of the data. How do we know what the weight is that we are about to accept before we try to pick up an item?
+
+Check out the `examine` request.
+
+---------------------------------------------------------------------------------------
+
+<a name="q1600"></a>
+### It seems that requests such as moving, picking up items, selling, etc are governed by the cooldown period. Is a status check on our individual user counted in that?
+
+No. There is a `MIN_COOLDOWN` of 1.0, so if you run the `status` command, you should see something between 1-`cooldown`, depending on how long since you last moved.
+
+---------------------------------------------------------------------------------------
+
+<a name="q1700"></a>
+### If we pair program and another teammate types it up and pushes it, will that affect our scores for this sprint?
+
+Not necessarily. You can get a 2 in each technical row on the rubric as long as you can provide a clear, thorough explanation of what different pieces of the application are doing. So understanding the code is "enough".
+
+_BUT_ if you're shooting for 3's in any or all rows, make sure you can "demonstrate and explain code that you contributed for this part of the task".
+
+---------------------------------------------------------------------------------------
+
+<a name="q1800"></a>
+### What responses can we expect to receive after sumbitting a `mine` request?
+
+You will get back specific messages that let you know if you succeeded in mining a Lambda coin or not. In the event your request was not successful, you should receive a message about why (invalid proof, True Name not yet acquired, etc.)
