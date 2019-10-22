@@ -20,3 +20,25 @@
 .App-link {
   color: #09d3ac;
 }
+
+.Map {
+  background-color: #09d3ac;
+  width: 100vw;
+  height: 80vh;
+}
+
+.Info {
+  width: 100vw;
+  height: 20vh;
+  display: flex;
+}
+
+.Character_stats {
+  background-color: rgb(90, 63, 63);
+  width: 50%;
+}
+
+.Invetory {
+  background-color: rgb(170, 148, 148);
+  width: 50%;
+}
