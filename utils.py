@@ -17,9 +17,20 @@ class Player:
     def __init__(self, name, startingRoom):
         self.name = name
         self.currentRoom = startingRoom
+        self.player_cooldown = 1,
+        self.player_encumbrance = 0,
+        self.player_strength = 0,
+        self.player_speed = 0,
+        self.player_gold = 0,
+        self.player_inventory = [],
+        self.player_status = [],
+        self.player_errors = [],
+        self.player_messages = []
+        self.player_mine = ''
+        
 
 class mapper:
-  def __init__(self,auth =auth_key,save = True, load_map= True):
+  def __init__(self, auth=auth_key, save=True, load_map=True):
     self.auth = auth  #the auth token
     self.header = {'Authorization':f'Token {self.auth}'}   #the header for post and get
     self.wait = 18  # the current sleep length - this is no longer required as wait always points to cooldown
@@ -30,7 +41,7 @@ class mapper:
     self.import_text_map = load_map #import map so far - setting to false starts from scratch
     self.player = None
 
-  def get_info(self,what='init',direction=None,backtrack=None):
+  def get_info(self, what='init', direction=None, backtrack=None):
     """multi purpose move & init function - this is used
     for the most common actions"""
   
@@ -56,20 +67,20 @@ class mapper:
     else:
       print('cooldown triggered - waiting 20 seconds')
       time.sleep(20)
-      self.get_info(what=what,direction=direction,backtrack=backtrack)
+      self.get_info(what=what, direction=direction, backtrack=backtrack)
 
-  def action(self,what='take',treasure=None):
+  def action(self, what='take', treasure=None):
     """another multi purpose request function
     this one focuses on less common actions"""
 
     if what in ['take','drop','sell','examine']:
-      response = requests.post(f'{my_url}{what}/',headers=self.header,json = {"name":treasure})
+      response = requests.post(f'{my_url}{what}/', headers=self.header, json={"name":treasure})
 
     if what in ['status','pray']:
-      response = requests.post(f'{my_url}{what}/',headers=self.header)
+      response = requests.post(f'{my_url}{what}/', headers=self.header)
 
     if what == 'confirm_sell':
-      response = requests.post(f'{my_url}{what}/',headers=self.header,json = {"name":treasure, "confirm" : "yes"})
+      response = requests.post(f'{my_url}{what}/', headers=self.header, json={"name":treasure, "confirm" : "yes"})
 
     if response.status_code==200:
       self.info = json.loads(response.content)
@@ -113,11 +124,11 @@ class mapper:
         
     return self.my_map,self.player
 
-  def pop_map_on_move(self,move):
+  def pop_map_on_move(self, move):
     """fills in the map while moving in the direction specified"""
     reverse_dir ={'n':'s','s':'n','w':'e','e':'w'}
     old_room = self.player.currentRoom
-    info = self.get_info('move',move)
+    info = self.get_info('move', move)
     self.player.currentRoom = info['room_id']
     print(info)  # leave this line in to get movement updates
     new_room = info['room_id']
@@ -143,7 +154,7 @@ class mapper:
           counter += 1
     return counter
   
-  def get_dirs(self,traversal):
+  def get_dirs(self, traversal):
     """gets the direction of travel given a room traversal list"""
     point = traversal[0]
     dir_list = []
@@ -175,7 +186,7 @@ class mapper:
 
     return q.queue[0]
 
-  def explore_random(self,counter=5):
+  def explore_random(self, counter=5):
     """explores the map choosing random ? and backtracks using bfs
     counter is the number of times you want it to explore unkown rooms"""
     unmapped_number = self.count_unmapped()
@@ -203,26 +214,42 @@ class mapper:
           self.player.currentRoom = b_info['room_id']
       c+=1
 
-    def go_to_room(self,destination):
-      """depth first traversal to particular room in shortest route
-      NOT OPERATIONAL YET"""
-      s = Stack()
-      s.push([self.player.currentRoom])
-      
-      while destination not in s.stack[-1]:
-        current_point = s.stack[-1][-1]
-        
-        joins = self.my_map.vertices[current_point]
-        if joins is None:
-          s.pop()
+  def go_to_room(self, destination):
+    """depth first traversal to particular room in shortest route
+    NOT OPERATIONAL YET"""
+    self.accumulate = False
+    print('moving')
+    path = self.my_map.bfs(self.player.currentRoom, destination)
+    print(f'Path: {path}')
+    for m in path:
+      room = self.player.currentRoom
+      print(f'Room: {room}')
+      exits = self.my_map[room]
+      print(f'Room: {room}')
+      for direction in exits:
+        if self.my_map[room][direction] == m:
+          self.get_info(what='move', direction=direction)
         else:
-          temp_list = []
-          for j in joins:
-            _ = [x for x in s.stack[-1]]
-            _.append(j)
-            temp_list.append(_)
-          for tl in temp_list:
-            s.push(tl)
+          return f'go_to_room FAILED: Invalid Direction[{direction}], Room[{room}]'
+    self.accumulate = True
 
-      return s.stack[-1]
+      # s = Stack()
+      # s.push([self.player.currentRoom])
+      
+      # while destination not in s.stack[-1]:
+      #   current_point = s.stack[-1][-1]
+        
+      #   joins = self.my_map.vertices[current_point]
+      #   if joins is None:
+      #     s.pop()
+      #   else:
+      #     temp_list = []
+      #     for j in joins:
+      #       _ = [x for x in s.stack[-1]]
+      #       _.append(j)
+      #       temp_list.append(_)
+      #     for tl in temp_list:
+      #       s.push(tl)
+
+      # return s.stack[-1]
 

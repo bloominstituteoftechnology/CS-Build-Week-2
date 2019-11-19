@@ -124,16 +124,23 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
+        print('Starting BFS')
         q = Queue()
+        visited = {}
         q.enqueue([starting_vertex])
-        
-        while destination_vertex not in q.queue[0]:
+        print(f'Starting vertex: {starting_vertex}')
+        # while destination_vertex not in q.queue[0]:
+        while q.queue[0][-1] != destination_vertex:
           current_point = q.queue[0][-1]
-          joins = self.vertices[current_point]
+          print(f'current point: {current_point}')
+          joins = self.vertices[current_point].values()
+          # print(joins)
           for j in joins:
-            _ = [x for x in q.queue[0]]
-            _.append(j)
-            q.enqueue(_)
+            # print(f'J: {j}')
+            if j != '?':
+              _ = [x for x in q.queue[0]]
+              _.append(j)
+              q.enqueue(_)
           q.dequeue()
 
         return q.queue[0]
