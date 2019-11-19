@@ -22,7 +22,8 @@ class mapper:
     self.accumulate = False #whether player picks up items or not - it ise very easy to get overencumbered
 
   def get_info(self,what='init',direction=None,backtrack=None):
-    """multi purpose move & init function"""
+    """multi purpose move & init function - this is used
+    for the most common actions"""
     #info = !curl -X GET -H 'Authorization: Token 827d98231059f187c4203da53476090d1c83a2b9' https://lambda-treasure-hunt.herokuapp.com/api/adv/init/
     if what=='init':
       response = requests.get(f'{my_url}{what}/',headers=self.header) 
@@ -45,7 +46,8 @@ class mapper:
       self.get_info(what=what,direction=direction,backtrack=backtrack)
 
   def action(self,what='take',treasure=None):
-    """another multi purpose request function"""
+    """another multi purpose request function
+    this one focuses on less common actions"""
 
     if what in ['take','drop','sell','examine']:
       response = requests.post(f'{my_url}{what}/',headers=self.header,json = {"name":treasure})
