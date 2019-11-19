@@ -119,4 +119,10 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+#dotenv
+.env
+
+#various
+roominfo copy.json
+
 # End of https://www.gitignore.io/api/django
