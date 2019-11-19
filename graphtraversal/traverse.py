@@ -147,11 +147,10 @@ def upateFile():
     f.write(json.dumps(goBackCache))
     f.close()
 
-while len(visitedIds) < 500 :
-    try:
-        start()
-        time.sleep(16) #cooldown is lost upon break of functionality so this needs to be hardcoded
-        init()
-        traverse()
-    except:
-        print("restart")
+
+
+start()
+time.sleep(16) #cooldown is lost upon break of functionality so this needs to be hardcoded
+init()
+traverse()
+
