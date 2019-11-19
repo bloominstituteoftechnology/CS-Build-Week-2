@@ -1,7 +1,16 @@
 # Explorer guide
 
+either run from command line with 
 
-## to initialize
+```
+python explore.py
+```
+
+or load up python from command line and import * from utils
+
+basic_utils.py is just all the old graphs, stack, queue and search funtions from our assignments
+
+## to initialize from python
 
 ```python
 mappy = mapper()
