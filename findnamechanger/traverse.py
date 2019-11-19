@@ -57,12 +57,13 @@ def traverse():
     while len(visitedIds) < 500:
 
         print(currentRoom['room_id'])
-        if currentRoom['room_id'] is 467:
+        if currentRoom['room_id'] == 467:
             changeName()
             break
 
-        if currentRoom['room_id'] is 461:
+        if currentRoom['room_id'] == 461:
             pray()
+            break
             
 
         connection = connections[str(currentRoom['room_id'])][1]
@@ -96,12 +97,16 @@ def traverse():
             break
 
 def changeName():
+    print("NAMECHANGER")
+    time.sleep(30000)
     res = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/',
                         headers={'Authorization': str(os.getenv('authToken'))},
-                        json={'name': 'BestTeam: Sorin the Mentor, Torben the Hero, Wasiu the Great, Damola the Magic, Shola the Wizard, Inaki the other Hero'}
+                        json={'name': 'BestTeam: Sorin the Mentor, Thorben the Hero, Wasiu the Great, Damola the Magic, Shola the Wizard, Inaki the other Hero'}
                         )
 
 def pray():
+    print("SHRINE")
+    time.sleep(30000)
     res = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/',
                         headers={'Authorization': str(os.getenv('authToken'))}
                         )
@@ -169,8 +174,7 @@ def upateFile():
 
 
 
-# start()
-#cooldown is lost upon break of functionality so this needs to be hardcoded
+start()
 init()
 traverse()
 
