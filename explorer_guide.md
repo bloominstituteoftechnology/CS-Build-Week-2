@@ -19,7 +19,7 @@ mappy.create_starting_map()
 
 ## set your custom variables
 ```python
-mappy.accumulate = True
+mappy.accumulate = True       # auto pick up items
 mappy.save_map_to_text = True #overwrite current map.txt with fresh map.txt
 mappy.import_text_map = True #load current map.txt as starting map #MUST BE DONE BEFORE create_starting_map
                              #if you don't want fresh map
@@ -33,7 +33,8 @@ mappy.explore_random(50)   #exploring 50 unkown rooms (not including backtrackin
 ## take action in current room given lastest info from server
 
 ```python
-mappy.room_check()
+mappy.room_check()   #given how you have set certain variables like pray oraccumulate will uatomate actions 
+                    # given certain cues from the server json responses
 ```
 
 ## examples of working commands
