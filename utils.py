@@ -4,6 +4,7 @@ import requests
 import json
 import time
 import random
+import os
 
 auth_key = config('AUTH_KEY')  #MAKE SURE YPU HAVE .ENV SET UP 
 my_url = config('LAMBDA_URL')  # AND PYTHON DECOUPLE INSTALLED
@@ -14,18 +15,20 @@ class Player:
         self.currentRoom = startingRoom
 
 class mapper:
-  def __init__(self,auth =auth_key):
+  def __init__(self,auth =auth_key,save = True, load_map= True):
     self.auth = auth  #the auth token
     self.header = {'Authorization':f'Token {self.auth}'}   #the header for post and get
     self.wait = 18  # the current sleep length
     self.info = {}   #the last status json from post or get
     self.accumulate = False #whether player picks up items or not - it ise very easy to get overencumbered
     self.pray = False #can't pray without a name unfortunately
+    self.save_map_to_text = save  #save latest map to a text file
+    self.import_text_map = load_map #import map so far - setting to false starts from scratch
 
   def get_info(self,what='init',direction=None,backtrack=None):
     """multi purpose move & init function - this is used
     for the most common actions"""
-    #info = !curl -X GET -H 'Authorization: Token 827d98231059f187c4203da53476090d1c83a2b9' https://lambda-treasure-hunt.herokuapp.com/api/adv/init/
+  
     if what=='init':
       response = requests.get(f'{my_url}{what}/',headers=self.header) 
 
@@ -37,9 +40,10 @@ class mapper:
 
     if response.status_code==200:
       self.info = json.loads(response.content)
-      #if self.info['terrain'] == 'TRAP':
-      if 'cooldown' in self.info.keys():
+
+      if 'cooldown' in self.info.keys():  #there are a lot of TRAPS which require extra cooldown
           time.sleep(self.info['cooldown'])
+
       self.room_check()
       return self.info
     else:
@@ -69,15 +73,15 @@ class mapper:
       print('error',what,treasure,response.status_code)
 
   def room_check(self):
+    """checks for items in teh room or special rooms"""
     #print('room check triggered.  info: ',self.info)
     if self.info['items']!=[] and self.accumulate:
       for item in self.info['items']:
-        #time.sleep(self.wait)
+
         self.info = self.action('take',item)
         print(self.info)
-        #time.sleep(self.info['cooldown'])
 
-    if self.info['title'] == "Linh's Shrine" and self.pray:
+    if self.info['title'] == "Linh's Shrine" and self.pray:  #there may be other shrines
       self.info = self.action('pray')
     
   def create_starting_map(self):
@@ -90,7 +94,14 @@ class mapper:
     exit_dict = {}
     for e in exits:
       exit_dict[e] = '?'
-    self.my_map.vertices[self.player.currentRoom] = exit_dict
+    if self.import_text_map:
+        print("load map triggered")
+        with open('map.txt','r') as file:
+            self.my_map.vertices = json.loads(file.read())
+    else:
+        print("fresh map triggered")
+        self.my_map.vertices[self.player.currentRoom] = exit_dict
+        
     return self.my_map,self.player
 
   def pop_map_on_move(self,move):
@@ -110,6 +121,9 @@ class mapper:
     self.my_map.vertices[old_room][move] = new_room
     reverse_move = reverse_dir[move]
     self.my_map.vertices[new_room][reverse_move] = old_room
+    if self.save_map_to_text:
+        with open('map.txt','w') as file:
+            file.write(json.dumps(self.my_map.vertices))
 
   def count_unmapped(self):
     """counts all the unmapped rooms"""
@@ -173,13 +187,11 @@ class mapper:
       else:   
         print('back track on') #leave this line in to show you when you are backtracking
         backtrack = self.bfs_for_q()
-        #print('backtrack is', backtrack)
         backtrack_dirs = self.get_dirs(backtrack)
         print('backtrack details',backtrack,backtrack_dirs) #this line shows details of backtrack
         for i in range(len(backtrack_dirs)):
           b_info = self.get_info('backtrack',backtrack_dirs[i],str(backtrack[i+1]))
           self.player.currentRoom = b_info['room_id']
-          #time.sleep(self.wait) #waiting logic has been moved to action functions
       c+=1
 
     def go_to_room(self,destination):
