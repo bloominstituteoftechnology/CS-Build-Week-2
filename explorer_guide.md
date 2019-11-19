@@ -8,10 +8,17 @@ mappy = mapper()
 mappy.create_starting_map()
 ```
 
+## set your custom variables
+```python
+mappy.accumulate = True
+mappy.save_map_to_text = True #overwrite current map.txt with fresh map.txt
+mappy.import_text_map = True #load current map.txt as starting map #MUST BE DONE BEFORE create_starting_map
+                             #if you don't want fresh map
+```
 ## randomly explore
 
 ```python
-mappy.explore_random(50)
+mappy.explore_random(50)   #exploring 50 unkown rooms (not including backtracking)
 ```
 
 ## take action in current room given lastest info from server
@@ -23,6 +30,10 @@ mappy.room_check()
 ## examples of working commands
 ```python
 mappy.action('take','tiny treasure')    # pick up some treasure  
+mappy.action('drop','tiny treasure')    # pick up some treasure  
+mappy.action('sell','tiny treasure')    # pick up some treasure  
+mappy.action('sell_confirm','tiny treasure')    # pick up some treasure  
 mappy.action('status')                  # get status update
+mappy.action('pray')                    #pray in shrine room
 mappy.get_info('backtrack','e','254')   # back track specifying room and direction
 ```
