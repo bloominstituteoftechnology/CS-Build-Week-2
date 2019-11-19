@@ -1,6 +1,8 @@
 class Queue():
     def __init__(self):
         self.queue = []
+    def __repr__(self):
+        return f'{self.queue}'
     def enqueue(self, value):
         self.queue.append(value)
     def dequeue(self):
@@ -126,18 +128,21 @@ class Graph:
         """
         print('Starting BFS')
         q = Queue()
-        visited = {}
+        visited = set()
         q.enqueue([starting_vertex])
         print(f'Starting vertex: {starting_vertex}')
-        # while destination_vertex not in q.queue[0]:
-        while q.queue[0][-1] != destination_vertex:
+        
+        while destination_vertex not in q.queue[0]:
+        # while q.queue[0][-1] != destination_vertex:
+          print(q)
           current_point = q.queue[0][-1]
           print(f'current point: {current_point}')
           joins = self.vertices[current_point].values()
           # print(joins)
           for j in joins:
             # print(f'J: {j}')
-            if j != '?':
+            if j != '?' and j not in visited:
+              visited.add(j)
               _ = [x for x in q.queue[0]]
               _.append(j)
               q.enqueue(_)
