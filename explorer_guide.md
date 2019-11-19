@@ -39,11 +39,16 @@ mappy.room_check()   #given how you have set certain variables like pray oraccum
 
 ## examples of working commands
 ```python
-mappy.action('take','tiny treasure')    # pick up some treasure  
-mappy.action('drop','tiny treasure')    # pick up some treasure  
-mappy.action('sell','tiny treasure')    # pick up some treasure  
-mappy.action('sell_confirm','tiny treasure')    # pick up some treasure  
-mappy.action('status')                  # get status update
-mappy.action('pray')                    #pray in shrine room
+mappy.get_info('init')                  # initialize and get current room details
+mappy.get_info('move','n')              # move north
 mappy.get_info('backtrack','e','254')   # back track specifying room and direction
+
+mappy.action('take','tiny treasure')    # pick up some treasure  
+mappy.action('drop','tiny treasure')    # drop some treasure in your inventory
+mappy.action('sell','tiny treasure')    # sell some treasure in your inventory
+mappy.action('sell_confirm','tiny treasure')    # confirm sell some treasure in your inventory 
+mappy.action('examine','tiny treasure')    # examine tiny treasure in your inventory
+mappy.action('status')                  # get status update
+mappy.action('pray')                    # pray in shrine room
+
 ```
