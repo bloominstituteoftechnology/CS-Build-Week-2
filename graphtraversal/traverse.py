@@ -12,11 +12,46 @@ cooldown = 0
 visitedIds = set()
 count = 0
 roomsInfo = []
+goBackCache = []
 
+def start():
+    global currentRoom
+    currentRoom = None
+    global cooldown
+    cooldown = 0
+    global visitedIds
+    visitedIds = set()
+    global count 
+    count = 0
+    global roomsInfo
+    roomsInfo = []
+    global goBackCache
+    goBackCache = []
+
+    try:
+        with open('roominfo.json', 'r') as jsonFile:
+            prevData = json.load(jsonFile)
+            for el in prevData:
+                visitedIds.add(el['room_id'])
+                roomsInfo.append(el)
+
+        with open('goBackCache.json', 'r') as jsonFile:
+            prevData = json.load(jsonFile)
+            for el in prevData:
+                goBackCache.append(el)
+                    
+        count = 0
+
+        print("moves:", count, " len(visited):", len(visitedIds), " len(roomsInfo):", len(roomsInfo))
+
+
+
+    except:
+        return
 
 def traverse():
 
-    goBackCache = []
+    global goBackCache
 
     while len(visitedIds) < 500:
 
@@ -68,8 +103,11 @@ def move(dir):
 
 
 def init():
+    time.sleep(cooldown)
+
     res = requests.get('https://lambda-treasure-hunt.herokuapp.com/api/adv/status/api/adv/init/',
                        headers={'Authorization': str(os.getenv("authToken"))})
+
     handleRes(res)
 
 
@@ -82,6 +120,7 @@ def handleRes(res):
         cooldown = res['cooldown']
         del res['cooldown']
         del res['players']
+
         global currentRoom
         currentRoom = res
         
@@ -94,14 +133,25 @@ def handleRes(res):
             roomsInfo.append(res)
             visitedIds.add(res['room_id'])
             print("moves:", count, " len(visited):", len(visitedIds), " len(roomsInfo):", len(roomsInfo))   
-
-        upateFile()
+            
+    upateFile()
 
 def upateFile():
     global roomsInfo
-    f = open("roominfo.json", "w+")
+    f = open("./roominfo.json", "w+")
     f.write(json.dumps(roomsInfo))
+    f.close()
 
+    global goBackCache
+    f = open("./goBackCache.json", "w+")
+    f.write(json.dumps(goBackCache))
+    f.close()
 
-init()
-traverse()
+while len(visitedIds) < 500 :
+    try:
+        start()
+        time.sleep(16) #cooldown is lost upon break of functionality so this needs to be hardcoded
+        init()
+        traverse()
+    except:
+        print("restart")
