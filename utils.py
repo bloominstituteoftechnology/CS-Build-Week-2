@@ -9,6 +9,10 @@ import os
 auth_key = config('AUTH_KEY')  #MAKE SURE YPU HAVE .ENV SET UP 
 my_url = config('LAMBDA_URL')  # AND PYTHON DECOUPLE INSTALLED
 
+def keystoint(x):
+    "function to change json dictionary keys to ints - used for map load"
+    return {int(k): v for k, v in x.items()}
+
 class Player:
     def __init__(self, name, startingRoom):
         self.name = name
@@ -18,12 +22,13 @@ class mapper:
   def __init__(self,auth =auth_key,save = True, load_map= True):
     self.auth = auth  #the auth token
     self.header = {'Authorization':f'Token {self.auth}'}   #the header for post and get
-    self.wait = 18  # the current sleep length
+    self.wait = 18  # the current sleep length - this is no longer required as wait always points to cooldown
     self.info = {}   #the last status json from post or get
-    self.accumulate = False #whether player picks up items or not - it ise very easy to get overencumbered
+    self.accumulate = False #whether player picks up items or not - it is very easy to get overencumbered
     self.pray = False #can't pray without a name unfortunately
     self.save_map_to_text = save  #save latest map to a text file
     self.import_text_map = load_map #import map so far - setting to false starts from scratch
+    self.player = None
 
   def get_info(self,what='init',direction=None,backtrack=None):
     """multi purpose move & init function - this is used
@@ -40,6 +45,8 @@ class mapper:
 
     if response.status_code==200:
       self.info = json.loads(response.content)
+      if self.player is not None:
+        self.player.currentRoom = self.info['room_id']
 
       if 'cooldown' in self.info.keys():  #there are a lot of TRAPS which require extra cooldown
           time.sleep(self.info['cooldown'])
@@ -97,7 +104,9 @@ class mapper:
     if self.import_text_map:
         print("load map triggered")
         with open('map.txt','r') as file:
-            self.my_map.vertices = json.loads(file.read())
+            string_dict = json.loads(file.read())
+            for key in string_dict:
+                self.my_map.vertices[int(key)] = string_dict[key]
     else:
         print("fresh map triggered")
         self.my_map.vertices[self.player.currentRoom] = exit_dict
@@ -195,7 +204,8 @@ class mapper:
       c+=1
 
     def go_to_room(self,destination):
-      """depth first traversal to particular room in shortest route"""
+      """depth first traversal to particular room in shortest route
+      NOT OPERATIONAL YET"""
       s = Stack()
       s.push([self.player.currentRoom])
       

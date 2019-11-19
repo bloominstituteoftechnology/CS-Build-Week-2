@@ -24,6 +24,11 @@ mappy.save_map_to_text = True #overwrite current map.txt with fresh map.txt
 mappy.import_text_map = True #load current map.txt as starting map #MUST BE DONE BEFORE create_starting_map
                              #if you don't want fresh map
 ```
+## show your latest map
+```python
+mappy.my_map.vertices
+```
+
 ## randomly explore
 
 ```python
@@ -33,7 +38,7 @@ mappy.explore_random(50)   #exploring 50 unkown rooms (not including backtrackin
 ## take action in current room given lastest info from server
 
 ```python
-mappy.room_check()   #given how you have set certain variables like pray oraccumulate will uatomate actions 
+mappy.room_check()   #given how you have set certain variables like pray or accumulate will automate actions 
                     # given certain cues from the server json responses
 ```
 
