@@ -84,14 +84,16 @@ def handleRes(res):
         del res['players']
         global currentRoom
         currentRoom = res
-        global roomsInfo
-        roomsInfo.append(res)
+        
         global visitedIds
+        global count
+        count += 1
+        
         if res['room_id'] not in visitedIds:
-            global count
-            count += 1
-            print(count)
+            global roomsInfo 
+            roomsInfo.append(res)
             visitedIds.add(res['room_id'])
+            print("moves:", count, " len(visited):", len(visitedIds), " len(roomsInfo):", len(roomsInfo))   
 
         upateFile()
 
