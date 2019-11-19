@@ -123,6 +123,6 @@ dmypy.json
 .env
 
 #various
-roominfo copy.json
+.vscode
 
 # End of https://www.gitignore.io/api/django
