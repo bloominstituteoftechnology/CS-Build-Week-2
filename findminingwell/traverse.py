@@ -62,17 +62,18 @@ def traverse():
 
         if currentRoom['room_id'] is 461:
             pray()
+            break
             
 
         connection = connections[str(currentRoom['room_id'])][1]
 
-        if 'n' in currentRoom['exits'] and connection['n'] not in visitedIds:
-            goBackCache.append('s')
-            move('n')
-
-        elif 'e' in currentRoom['exits'] and connection['e'] not in visitedIds:
+        if 'e' in currentRoom['exits'] and connection['e'] not in visitedIds:
             goBackCache.append('w')
             move('e')
+
+        elif 'n' in currentRoom['exits'] and connection['n'] not in visitedIds:
+            goBackCache.append('s')
+            move('n')
 
         elif 's' in currentRoom['exits'] and connection['s'] not in visitedIds:
             goBackCache.append('n')
@@ -93,6 +94,7 @@ def traverse():
                     break
         else:
             break
+    pray()
 
 def pray():
     res = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/',
