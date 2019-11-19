@@ -6,6 +6,9 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+decouple = "*"
+requests = "*"
+python-decouple = "*"
 
 [requires]
 python_version = "3.7"
