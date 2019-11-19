@@ -94,7 +94,6 @@ def traverse():
                     break
         else:
             break
-    pray()
 
 def pray():
     res = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/',
