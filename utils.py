@@ -82,6 +82,13 @@ class mapper:
     if what == 'confirm_sell':
       response = requests.post(f'{my_url}{what}/', headers=self.header, json={"name":treasure, "confirm" : "yes"})
 
+    # Change Name +++++++
+    if what == 'change_name':
+      response = request.post(f'{my_url}{what}/', headers=self.headers, json={"name":new})
+    # Confirm Name +++++++
+    if what == 'confirm_name':
+      response = request.post(f'{my_url}{what}/', headers=self.headers, json={"confirm": "aye"})
+
     if response.status_code==200:
       self.info = json.loads(response.content)
       if 'cooldown' in self.info.keys():
@@ -101,6 +108,16 @@ class mapper:
 
     if self.info['title'] == "Linh's Shrine" and self.pray:  #there may be other shrines
       self.info = self.action('pray')
+
+    # Would this sell? ++++++
+    if self.info['title'] == "shop" and self.sell: # This could sell?
+      self.info = self.action('sell',item)
+      self.info = self.action('confirm_sell')
+
+    # Could this do the name change? +++++++
+    if self.info['title'] == "pirate ry" and self.change_name: 
+      self.info = self.action('change_name', "name":"Spongebubba")
+      self.info = self.action('confirm_name')
     
   def create_starting_map(self):
     """"initiates your starting map which is stored under the vertices of a graph class"""
@@ -253,3 +270,69 @@ class mapper:
 
       # return s.stack[-1]
 
+  def pirate(self):
+    # Goes directly to pirate ry
+    # self.go_to_room()
+    # time.sleep(self.wait)
+    pass
+
+  def wishing_well(self):
+    # Goes directly to pirate ry
+    # self.go_to_room()
+    # time.sleep(self.wait)
+    pass
+
+  def vendor(self):
+    # Goes directly to the shop
+    self.go_to_room(1)
+    time.sleep(self.wait)
+
+  # Method to get treasure
+  # BFS Randomly to travel the maze, looting
+  # Once you get enough treasure, go sell
+  # Once you reach 1000 gold, buy a name
+    # Change name to something unique, that doesnt contain player
+  # Keep looting and selling until stopped.
+  def get_treasure(self):
+    while True:
+      if self.player.name.contains('player') and self.player.gold > 1000: # get a name
+        # Go to name changer (pirate ry)
+        print('Time to Buy a Name')
+        name_changer = self.go_to_room('pirate ry')
+        time.sleep(self.wait)
+        # Buy name
+        self.action('change_name')
+        time.sleep(self.wait)
+        # confirm_name
+        self.action('confirm_name')
+        print('Got a name! Time to get a COIN.', {self.player.name})
+        time.sleep(self.wait)
+        # self.action('status') #Check new name
+     
+      elif player.encumbered <= player.strength - 2:
+        # If encumbered is str-2 (at base = 8)
+        # Travel the room bfs style at random
+        # Loot as you go with room_check
+        print('Looting..')
+        # self.explore_random(500)
+        self.go_to_room(str(random.choice(range(0,499))))
+        time.sleep(self.wait)
+
+      # Could potentially add a section to manage miner
+
+      else:
+        # else go directly to the shop
+        # loop through inventory and sell
+        # Go back to looting
+        print('Need to offload my loot.')
+        self.go_to_room(1) # room 1 = shop
+        time.sleep(self.wait)
+        print('At the shop, time to sell.')
+        for count in range(treasures/inventory):
+          print('Selling item..')
+          self.action('sell', item)
+          time.sleep(self.wait)
+          self.action('confirm_sell')
+          print("{self.player.gold}")
+          time.sleep(self.wait)
+        print('Back to Looting', {player.inventory})
