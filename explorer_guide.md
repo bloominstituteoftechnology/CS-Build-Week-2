@@ -20,9 +20,9 @@ mappy.explore_random(50)
 mappy.room_check()
 ```
 
-## examples of workign commands
+## examples of working commands
 ```python
-mappy.action('take','tiny treasure')    #pick up some treasure  
+mappy.action('take','tiny treasure')    # pick up some treasure  
 mappy.action('status')                  # get status update
 mappy.get_info('backtrack','e','254')   # back track specifying room and direction
 ```

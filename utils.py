@@ -5,8 +5,8 @@ import json
 import time
 import random
 
-auth_key = config('AUTH_KEY')
-my_url = config('LAMBDA_URL')
+auth_key = config('AUTH_KEY')  #MAKE SURE YPU HAVE .ENV SET UP 
+my_url = config('LAMBDA_URL')  # AND PYTHON DECOUPLE INSTALLED
 
 class Player:
     def __init__(self, name, startingRoom):
@@ -14,12 +14,13 @@ class Player:
         self.currentRoom = startingRoom
 
 class mapper:
-  def __init__(self,auth ='827d98231059f187c4203da53476090d1c83a2b9'):
+  def __init__(self,auth =auth_key):
     self.auth = auth  #the auth token
     self.header = {'Authorization':f'Token {self.auth}'}   #the header for post and get
     self.wait = 18  # the current sleep length
     self.info = {}   #the last status json from post or get
     self.accumulate = False #whether player picks up items or not - it ise very easy to get overencumbered
+    self.pray = False #can't pray without a name unfortunately
 
   def get_info(self,what='init',direction=None,backtrack=None):
     """multi purpose move & init function - this is used
@@ -36,8 +37,9 @@ class mapper:
 
     if response.status_code==200:
       self.info = json.loads(response.content)
-      if self.info['terrain'] == 'TRAP':
-          time.sleep(30)
+      #if self.info['terrain'] == 'TRAP':
+      if 'cooldown' in self.info.keys():
+          time.sleep(self.info['cooldown'])
       self.room_check()
       return self.info
     else:
@@ -60,20 +62,22 @@ class mapper:
 
     if response.status_code==200:
       self.info = json.loads(response.content)
+      if 'cooldown' in self.info.keys():
+          time.sleep(self.info['cooldown'])
       return self.info
     else:
       print('error',what,treasure,response.status_code)
 
   def room_check(self):
-    print('room check triggered.  info: ',self.info)
+    #print('room check triggered.  info: ',self.info)
     if self.info['items']!=[] and self.accumulate:
       for item in self.info['items']:
-        time.sleep(self.wait)
+        #time.sleep(self.wait)
         self.info = self.action('take',item)
         print(self.info)
-        time.sleep(self.info['cooldown'])
+        #time.sleep(self.info['cooldown'])
 
-    if self.info['title'] == 'Shrine':
+    if self.info['title'] == "Linh's Shrine" and self.pray:
       self.info = self.action('pray')
     
   def create_starting_map(self):
@@ -95,7 +99,7 @@ class mapper:
     old_room = self.player.currentRoom
     info = self.get_info('move',move)
     self.player.currentRoom = info['room_id']
-    print(info)  #another debugger
+    print(info)  # leave this line in to get movement updates
     new_room = info['room_id']
     if new_room not in self.my_map.vertices:
       exit_dict = {}
@@ -167,15 +171,15 @@ class mapper:
         unmapped_number = self.count_unmapped()
         time.sleep(self.wait)
       else:   
-        print('back track on') 
+        print('back track on') #leave this line in to show you when you are backtracking
         backtrack = self.bfs_for_q()
         #print('backtrack is', backtrack)
         backtrack_dirs = self.get_dirs(backtrack)
-        print('backtrack details',backtrack,backtrack_dirs)
+        print('backtrack details',backtrack,backtrack_dirs) #this line shows details of backtrack
         for i in range(len(backtrack_dirs)):
           b_info = self.get_info('backtrack',backtrack_dirs[i],str(backtrack[i+1]))
           self.player.currentRoom = b_info['room_id']
-          time.sleep(self.wait)
+          #time.sleep(self.wait) #waiting logic has been moved to action functions
       c+=1
 
     def go_to_room(self,destination):
