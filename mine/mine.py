@@ -68,7 +68,7 @@ def proof(proposedProof):
         return False
 
 
-""" schedule.every(2).seconds.do(init) """
+schedule.every(2).seconds.do(init)
 init()
 while True:
     mine()
