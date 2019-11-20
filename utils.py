@@ -281,24 +281,26 @@ class mapper:
 
     def dash_to_room(self, destination):
         "same as go to room but with dash"
-        print('dashing')
+        #print('dashing')
         path = self.my_map.bfs(self.player.currentRoom, destination)
-        print('bfs',path)
+        #print('bfs',path)
         my_dirs = self.get_dirs(path)
         i = 0
         while i < len(path)-1:
-            if my_dirs[i]==my_dirs[i+1]:
+            if i < len(path)-2 and my_dirs[i]==my_dirs[i+1]:
                 print('dashing')
                 dash_path = self.get_dash_path(path[i:],my_dirs[i:])
                 self.make_dash(my_dirs[i],dash_path[1:])
                 print(f"Current Room -> Title: {self.info['title']} ID: {self.info['room_id']} Items: {self.info['items']}")
                 i += len(dash_path[1:])
             else:
+                print('normal walking')
                 room = self.player.currentRoom
                 exits = self.my_map.vertices[room]
                 for direction in exits:
                     if self.my_map.vertices[room][direction] == path[i+1]:
-                        self.get_info(what='backtrack', direction=direction,backtrack=path[i+1])
+                        #print('walk triggered',path[i+1],direction)
+                        self.get_info(what='backtrack', direction=direction,backtrack=str(path[i+1]))
                         print(
                             f"Current Room -> Title: {self.info['title']} ID: {self.info['room_id']} Items: {self.info['items']}")
                            
@@ -309,7 +311,7 @@ class mapper:
 
     def get_dash_path(self,traversal,dirs):
         "check if the path in go to room contains a dashable stretch"
-        #print('dash path check',traversal,dirs)
+        print('dash path check',traversal,dirs)
         dash_list = []
         j = 0
         while (j<len(dirs)-1) and dirs[j]==dirs[j+1]:
@@ -325,7 +327,7 @@ class mapper:
         string_rooms = ','.join([str(x) for x in traversal])
         params = {"direction":direction, "num_rooms":str(len(traversal)), 
                             "next_room_ids": string_rooms}
-        #print('dash_list_json',params,f'{my_url}dash/')
+        print('dash_list_json',params,f'{my_url}dash/')
         response = requests.post(
                     f'{my_url}dash/', headers=self.header, json=params)
 
@@ -464,28 +466,13 @@ class mapper:
         self.action('examine','well')
         z = self.info['description']  #read the last info to get the hint
         z = z.split('\n')[2:]
-        print(z[:5])
+        print(z)
         with open('hinter.ls8','w') as f:
             for zz in z:
                 f.write("%s\n" % zz)
         #quicker way to parse message
-        # z = [int(zz,2) for zz in z]
-        # chars = [chr(zz) for zz in z]
-        # print(chars)
-        # char_index = list(range(2,131,5))
-        # message = []
-        # for c in char_index:
-        #     message.append(chars[c])
-        # mine_room = message[-3:]
-        # try:
-        #     self.mine_room = int(''.join(mine_room))
-        # except:
-        #     try:
-        #         self.mine_room = int(''.join(mine_room[-2:]))
-        #     except:
-        #         self.mine_room = int(''.join(mine_room[-1:]))
-                
-        # return self.mine_room
+        #z = [int(zz,2) for zz in z]
+ 
 
     def get_proof(self):
         """gets last proof then obtains proof of work
