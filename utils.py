@@ -47,6 +47,8 @@ class mapper:
         # import map so far - setting to false starts from scratch
         self.import_text_map = load_map
         self.player = None
+        self.fly = False
+        self.dash = False
         self.important_rooms = {} # May not need this anymore (all special rooms are id'd)
 
     def get_info(self, what='init', direction=None, backtrack=None):
@@ -57,8 +59,16 @@ class mapper:
             response = requests.get(f'{my_url}{what}/', headers=self.header)
 
         elif what == 'move':
+            if self.fly and self.info['elevation']>0:
+                response = requests.post(
+                            f'{my_url}fly/', headers=self.header, json={"direction": direction})
+            else:
+                response = requests.post(
+                    f'{my_url}move/', headers=self.header, json={"direction": direction})
+
+        elif what == 'fly':
             response = requests.post(
-                f'{my_url}move/', headers=self.header, json={"direction": direction})
+                f'{my_url}fly/', headers=self.header, json={"direction": direction})
 
         elif what == 'backtrack':
             response = requests.post(f'{my_url}move/', headers=self.header,
@@ -88,7 +98,7 @@ class mapper:
                 f'{my_url}{what}/', headers=self.header, json={"name": treasure})
             print(f"Action: {what}")
 
-        if what in ['status', 'pray','balance']:
+        if what in ['status', 'pray']:
             response = requests.post(f'{my_url}{what}/', headers=self.header)
 
         if what == 'confirm_sell':
@@ -98,6 +108,10 @@ class mapper:
         if what == 'change_name':
             response = requests.post(
                 f'{my_url}{what}/', headers=self.header, json={"name": name, "confirm": "aye"})
+        
+        if what == 'balance':
+            response = requests.get(
+                'https://lambda-treasure-hunt.herokuapp.com/api/bc/get_balance/', headers=self.header)
 
         if response.status_code == 200:
             self.info = json.loads(response.content)
@@ -251,7 +265,7 @@ class mapper:
             c += 1
 
     def go_to_room(self, destination):
-        """Breath First Traversal to particular room in shortest route"""
+        """Breadth First Traversal to particular room in shortest route"""
         print('moving')
         path = self.my_map.bfs(self.player.currentRoom, destination)
         for m in path:
@@ -264,6 +278,69 @@ class mapper:
                         f"Current Room -> Title: {self.info['title']} ID: {self.info['room_id']} Items: {self.info['items']}")
                 else:
                     continue
+
+    def dash_to_room(self, destination):
+        "same as go to room but with dash"
+        print('dashing')
+        path = self.my_map.bfs(self.player.currentRoom, destination)
+        my_dirs = self.get_dirs(path)
+        i = 0
+        while i < len(path):
+            if my_dirs[i]==my_dirs[i+1]:
+                dash_path = self.get_dash_path(path[i:],my_dirs[i:])
+                self.make_dash(my_dirs[i],dash_path[1:])
+                print(f"Current Room -> Title: {self.info['title']} ID: {self.info['room_id']} Items: {self.info['items']}")
+                i += len(dash_path[1:])
+            else:
+                room = self.player.currentRoom
+                exits = self.my_map.vertices[room]
+                for direction in exits:
+                    if self.my_map.vertices[room][direction] == path[i]:
+                        self.get_info(what='move', direction=direction)
+                        print(
+                            f"Current Room -> Title: {self.info['title']} ID: {self.info['room_id']} Items: {self.info['items']}")
+                           
+                    else:
+                        pass
+                i+=1
+
+
+    def get_dash_path(self,traversal,dirs):
+        "check if the path in go to room contains a dashable stretch"
+        print('dash path check',traversal,dirs)
+        dash_list = []
+        j = 0
+        while dirs[j]==dirs[j+1]:
+            dash_list.append(traversal[j])
+            j += 1
+        dash_list.append(traversal[j])
+        dash_list.append(traversal[j+1])
+        print('dash_list',dash_list)
+        return dash_list
+
+    def make_dash(self,direction,traversal):
+        "make a dash given direction and traversal"
+        string_rooms = ','.join([str(x) for x in traversal])
+        params = {"direction":direction, "num_rooms":str(len(traversal)), 
+                            "next_room_ids": string_rooms}
+        print('dash_list_json',params,f'{my_url}dash/')
+        response = requests.post(
+                    f'{my_url}dash/', headers=self.header, json=params)
+
+        if response.status_code == 200:
+            self.info = json.loads(response.content)
+            if self.player is not None:
+                self.player.currentRoom = self.info['room_id']
+
+            if 'cooldown' in self.info.keys():  
+                time.sleep(self.info['cooldown'])
+
+            self.room_check()
+            return self.info
+        else:
+            print('cooldown triggered - waiting 20 seconds. code =',response.status_code,response.content)
+            time.sleep(20)
+            self.get_info(what=what, direction=direction, backtrack=backtrack)
 
     def pirate(self):
         # Goes directly to pirate ry
@@ -432,4 +509,7 @@ class mapper:
         for i in inv:
             self.action('sell',i)
             self.action('confirm_sell',i)
+
+    
+
 
