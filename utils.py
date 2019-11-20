@@ -6,6 +6,7 @@ import json
 import time
 import random
 import os
+from cpu2 import *
 
 auth_key = config('AUTH_KEY')  # MAKE SURE YPU HAVE .ENV SET UP
 my_url = config('LAMBDA_URL')  # AND PYTHON DECOUPLE INSTALLED
@@ -499,6 +500,26 @@ class mapper:
         for i in inv:
             self.action('sell',i)
             self.action('confirm_sell',i)
+
+    def auto_coins(self):
+        while True:
+            self.dash_to_room(55)
+            self.hint_to_ld8()
+            cpu = CPU()
+            cpu.load('hinter.ls8')
+            room_inst = cpu.run()
+            room_inst = ''.join(room_inst)
+            print(room_inst)
+            try:
+                mine_room = int(room_inst[-3:])
+            except:
+                try:
+                    mine_room = int(room_inst[-2:])
+                except:
+                    mine_room = int(room_inst[-1:])
+            print(mine_room)
+            self.dash_to_room(mine_room)
+            self.get_proof()
 
     
 

@@ -1,5 +1,6 @@
 import sys
 from datetime import datetime  # for timer interrupt
+ret_list = []
 # Opcodes:
 ADD  = 0b10100000
 AND  = 0b10101000
@@ -172,6 +173,7 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
         print()
     def run(self):
+
         while not self.halted:
         # Interrupt cod
             self.check_for_timer_int()     # timer interrupt check
@@ -191,12 +193,14 @@ class CPU:
             # If the instruction didn't set the PC, just move to the next instruction
             if not self.inst_set_pc:
                 self.pc += inst_size
+        return ret_list
     def op_ldi(self, operand_a, operand_b):
         self.reg[operand_a] = operand_b
     def op_prn(self, operand_a, operand_b):
         print(self.reg[operand_a])
     def op_pra(self, operand_a, operand_b):
         print(chr(self.reg[operand_a]), end='')
+        ret_list.append(chr(self.reg[operand_a]))
         sys.stdout.flush()
     def op_add(self, operand_a, operand_b):
         self.alu("ADD", operand_a, operand_b)
