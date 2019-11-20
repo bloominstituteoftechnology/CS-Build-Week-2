@@ -1,5 +1,6 @@
 from decouple import config
 from basic_utils import *
+from miner import *
 import requests
 import json
 import time
@@ -46,6 +47,7 @@ class mapper:
         # import map so far - setting to false starts from scratch
         self.import_text_map = load_map
         self.player = None
+        self.important_rooms = {} # May not need this anymore (all special rooms are id'd)
 
     def get_info(self, what='init', direction=None, backtrack=None):
         """multi purpose move & init function - this is used
@@ -93,7 +95,6 @@ class mapper:
             response = requests.post(
                 f'{my_url}{what}/', headers=self.header, json={"name": treasure, "confirm": "yes"})
 
-        # Change Name +++++++
         if what == 'change_name':
             response = requests.post(
                 f'{my_url}{what}/', headers=self.header, json={"name": name, "confirm": "aye"})
@@ -120,20 +121,14 @@ class mapper:
         if self.info['title'] == "Linh's Shrine" and self.pray:  # there may be other shrines
             self.info = self.action('pray')
 
-            # Would this sell? ++++++
         if self.info['title'] == "shop":
             self.info = self.action('sell', item)
             self.info = self.action('confirm_sell')
 
-        # Could this do the name change? +++++++
-        # if self.info['title'] == "Pirate Ry's":
-        #   self.info = self.action('change_name', name)
-        #   self.info = self.action('confirm_name')
-
     def create_starting_map(self):
         """"initiates your starting map which is stored under the vertices of a graph class"""
         info_dict = self.get_info()
-        print(info_dict)  # this can be deactivated - just helpful at first
+        # print(info_dict)  # this can be deactivated - just helpful at first
         self.my_map = Graph()
         self.player = Player("MicahJones", info_dict['room_id'])
         exits = info_dict['exits']
@@ -146,6 +141,11 @@ class mapper:
                 string_dict = json.loads(file.read())
                 for key in string_dict:
                     self.my_map.vertices[int(key)] = string_dict[key]
+            # May not need this anymore since all important rooms are id'd
+            with open('rooms.txt', 'r') as file:
+                string_dict = json.loads(file.read())
+                for key in string_dict:
+                    self.important_rooms[key] = string_dict[key]
         else:
             print("fresh map triggered")
             self.my_map.vertices[self.player.currentRoom] = exit_dict
@@ -172,6 +172,11 @@ class mapper:
         if self.save_map_to_text:
             with open('map.txt', 'w') as file:
                 file.write(json.dumps(self.my_map.vertices))
+        # May not need this anymore since all important rooms are id'd        
+        self.important_rooms.update({info['title']: info['room_id']})
+        if self.save_map_to_text:
+            with open('rooms.txt', 'w') as file:
+                file.write(json.dumps(self.important_rooms))
 
     def count_unmapped(self):
         """counts all the unmapped rooms"""
@@ -200,7 +205,6 @@ class mapper:
         q.enqueue([room])
 
         while '?' not in self.my_map.vertices[room].values():
-
             joins = self.my_map.vertices[room]
             for j in joins.values():
                 if j in q.queue[0]:
@@ -216,7 +220,7 @@ class mapper:
 
     def explore_random(self, counter=5):
         """explores the map choosing random ? and backtracks using bfs
-        counter is the number of times you want it to explore unkown rooms"""
+        counter is the number of times you want it to explore unknown rooms"""
         unmapped_number = self.count_unmapped()
         moves = []
         c = 0
@@ -247,39 +251,29 @@ class mapper:
             c += 1
 
     def go_to_room(self, destination):
-        """depth first traversal to particular room in shortest route
-        NOT OPERATIONAL YET"""
-        # self.accumulate = False
+        """Breath First Traversal to particular room in shortest route"""
         print('moving')
         path = self.my_map.bfs(self.player.currentRoom, destination)
-        # print(f'Path: {path}')
         for m in path:
             room = self.player.currentRoom
-            # print(f'Room: {type(room)}')
             exits = self.my_map.vertices[room]
-            # print(f'Room: {room}')
             for direction in exits:
                 if self.my_map.vertices[room][direction] == m:
-                    # print(f'direction: {direction}')
                     self.get_info(what='move', direction=direction)
                     print(
                         f"Current Room -> Title: {self.info['title']} ID: {self.info['room_id']} Items: {self.info['items']}")
                 else:
-                    # print(f'go_to_room FAILED: Invalid Direction[{direction}], Room[{room}]')
                     continue
-        # self.accumulate = True
 
     def pirate(self):
         # Goes directly to pirate ry
-        # self.go_to_room(self.important_rooms['pirate ry'])
-        # time.sleep(self.wait)
-        pass
+        self.go_to_room(467)
+        time.sleep(self.wait)
 
     def wishing_well(self):
         # Goes directly to pirate ry
-        # self.go_to_room(self.important_rooms['wishing well'])
-        # time.sleep(self.wait)
-        pass
+        self.go_to_room(55)
+        time.sleep(self.wait)
 
     def vendor(self):
         # Goes directly to the shop
@@ -294,8 +288,6 @@ class mapper:
     # Keep looting and selling until stopped.
     def get_treasure(self):
         while True:
-            # get a name
-
             #! This request is being used to get information about our player from the lambda server.
             #! This would probably be better off initializing our local player attributes at the top, but
             #! I tried this first.
@@ -304,29 +296,28 @@ class mapper:
             headers = {'Authorization': f'Token {token}'}
             r = requests.post(url, headers=headers)
             ret_data = r.json()
-
+            print('\n')
             print(f"***********Current Character Attributes***************")
             print(ret_data)
             print("*******************************************************")
 
             #!------------------------This name is specific to each person, be sure to change this to yours.
-            if ret_data['name'] == 'player446' and ret_data['gold'] >= 1000:
+            if ret_data['name'] == 'player420' and ret_data['gold'] >= 1000:
                 # Go to name changer (pirate ry)
                 print('Time to Buy a Name')
                 # * Made this false here so that we don't somehow pick up a ton of treasure on the way, and
                 # * get over-encumbered.
                 self.accumulate = False
-                self.go_to_room(467)  # pirate ry's room
+                self.pirate()  # pirate ry's room
                 time.sleep(self.wait)
                 # Buy name
                 #! -------------------------- Change the name here to be what you want!!
-                self.action('change_name', name='Micah')
+                self.action('change_name', name='SirSnuffaluffagus')
                 time.sleep(self.wait)
 
                 #! This print isn't accurate. It doesn't update when you actually change your name.
                 #! Next time you see it, it should have changed though.
-                print(
-                    f"Got a name! Time to get a COIN. New Name: {ret_data['name']}")
+                print(f"Got a name! Time to get a COIN. New Name: {ret_data['name']}")
                 time.sleep(self.wait)
                 # self.action('status') #Check new name
             elif ret_data['encumbrance'] <= ret_data['strength'] - 2:
@@ -361,14 +352,30 @@ class mapper:
                     print(f"You're current gold: {ret_data['gold']}")
                 print('Back to Looting')
 
+    def get_coins(self):
+      # Want this to do 3 things:
+      # Function to go to the wishing well and examine
+      # Function to go to where the wishing well says
+      # Function to mine coin at specified location
+      # Could include if clause to go transmog coins
 
-"""
-need a function to go to name changer and buy a name.
-funciton to go to wishing well and interact
-function to go to where wishing well says and mine a coin
-
-SHOP is in room id 1
-Name changer is in 467
-Well is 55
-
-"""
+      coins = 0
+      # variable for proof?
+      while coins < 1000:
+        # Go to wishing well
+        print('Going to the Wishing Well.')
+        self.wishing_well()
+        # Examine well
+        self.action('examine')
+        # Go to where it says
+        self.go_to_room('hinted location/room')
+        # Mine Coin
+        print('Getting proof...')
+        response = request.post(f'https://lambda-treasure-hunt.herokuapp.com/api/bc/last_proof/', headers=self.headers)
+        new_proof = proof_of_work(data.get('proof'), data.get('difficulty'))
+        time.sleep(self.wait)
+        # Need to send new_proof in the mine request json
+        response = request.post(f'https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/', headers=self.headers, json={"proof":''})
+        print('You got a coin!')
+        coins += 1
+        time.sleep(self.wait)

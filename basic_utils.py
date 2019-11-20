@@ -1,15 +1,10 @@
 class Queue():
     def __init__(self):
         self.queue = []
-<<<<<<< HEAD
-    def __repr__(self):
-        return f'{self.queue}'
-=======
 
     def __repr__(self):
         return f'{self.queue}'
 
->>>>>>> 753512d6a7fc8593e652c6d2bc28517c4f3d0a5b
     def enqueue(self, value):
         self.queue.append(value)
 
