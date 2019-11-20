@@ -116,6 +116,7 @@ class mapper:
       self.info = self.action('confirm_sell')
 
     # Could this do the name change? +++++++
+    # Need to send the new name here or above in request
     if self.info['title'] == "pirate ry": 
       self.info = self.action('change_name', name)
       self.info = self.action('confirm_name')
@@ -242,41 +243,33 @@ class mapper:
       c+=1
 
   def go_to_room(self, destination):
-    """depth first traversal to particular room in shortest route"""
-    self.accumulate = False
+    """breath first traversal to particular room in shortest route"""
     print('moving')
     path = self.my_map.bfs(self.player.currentRoom, destination)
-    # print(f'Path: {path}')
     for m in path:
       room = self.player.currentRoom
-      # print(f'Room: {type(room)}')
       exits = self.my_map.vertices[room]
-      # print(f'Room: {room}')
       for direction in exits:
         if self.my_map.vertices[room][direction] == m:
-          # print(f'direction: {direction}')
           self.get_info(what='move', direction=direction)
         else:
-          # print(f'go_to_room FAILED: Invalid Direction[{direction}], Room[{room}]')
           continue
-    self.accumulate = True
 
   def pirate(self):
-    # Goes directly to pirate ry
-    # self.go_to_room(self.important_rooms['pirate ry'])
-    # time.sleep(self.wait)
-    pass
+    # Goes directly to pirate ry, room 467
+    self.go_to_room(self.important_rooms['pirate ry'])
 
   def wishing_well(self):
-    # Goes directly to pirate ry
-    # self.go_to_room(self.important_rooms['wishing well'])
-    # time.sleep(self.wait)
-    pass
+    # Goes directly to wishing well, room 55
+    self.go_to_room(self.important_rooms['wishing well'])
+
+  def transmogriphier(self):
+    # Transmogriphier, room 495
+    self.go_to_room(self.important_rooms['Transmogriphier'])
 
   def vendor(self):
-    # Goes directly to the shop
+    # Goes directly to the shop, room 1
     self.go_to_room(1)
-    time.sleep(self.wait)
 
   # Method to get treasure
   # BFS Randomly to travel the maze, looting
@@ -323,3 +316,18 @@ class mapper:
           print({self.player.gold})
           time.sleep(self.wait)
         print('Back to Looting', {self.player.inventory})
+
+  def get_coins(self):
+    coins = 0
+    
+    while coins < 1000:
+    # Go to the wishing well & examine
+      self.wishing_well()
+      self.action('examine')
+    # Go to hinted block
+    # Call the miner
+    response = request.post(f'https://lambda-treasure-hunt.herokuapp.com/api/bc/last_proof/', headers=self.headers)
+    response = request.post(f'https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/', headers=self.headers, json={"proof":''})
+    # Submit last_proof request
+    # Submit Mine request
+    pass
