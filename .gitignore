@@ -119,4 +119,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+#various
+.vscode
+.env
+
 # End of https://www.gitignore.io/api/django
