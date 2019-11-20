@@ -482,6 +482,7 @@ class mapper:
         response = requests.get(f'https://lambda-treasure-hunt.herokuapp.com/api/bc/last_proof/', headers=self.header)
         self.last_proof = json.loads(response.content)
         print(self.last_proof)
+        time.sleep(self.last_proof['cooldown'])
         my_proof = proof_of_work(self.last_proof['proof'],self.last_proof['difficulty'])
         self.get_mine(my_proof)
         time.sleep(self.mine_response['cooldown'])
@@ -505,7 +506,11 @@ class mapper:
             self.action('confirm_sell',i)
 
     def auto_coins(self):
+        self.accumulate = True
         while True:
+            if 'encumbrance' in self.info and self.info['encumbrance']>8:
+                self.dash_to_room(1)
+                self.sell_all_items()
             self.dash_to_room(55)
             self.hint_to_ld8()
             cpu = CPU()
