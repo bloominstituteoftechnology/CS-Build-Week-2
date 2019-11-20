@@ -491,6 +491,9 @@ class mapper:
         params = {"proof" : new_proof}
         response = requests.post(f'https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/', headers=self.header,json = params)
         self.mine_response = json.loads(response.content)
+        if 'errors' in self.mine_response.keys() and self.mine_response['errors']!=[]:
+            time.sleep(self.mine_response['cooldown'])
+            self.get_proof()
         print(self.mine_response)
 
     def sell_all_items(self):
