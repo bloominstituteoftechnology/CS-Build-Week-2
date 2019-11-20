@@ -285,6 +285,16 @@ curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' 
 `
 
 
+## Warp
+
+You may come across the ability to warp to an alternate dimension where you can compete with other players to search for the mysterious golden snitch. Note that warp travel is dangerous so you must be have both bodywear and footwear equipped to warp.
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/warp/
+`
+
+
+
 
 # Lambda Coins
 
