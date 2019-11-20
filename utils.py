@@ -88,7 +88,7 @@ class mapper:
                 f'{my_url}{what}/', headers=self.header, json={"name": treasure})
             print(f"Action: {what}")
 
-        if what in ['status', 'pray']:
+        if what in ['status', 'pray','balance']:
             response = requests.post(f'{my_url}{what}/', headers=self.header)
 
         if what == 'confirm_sell':
@@ -379,3 +379,57 @@ class mapper:
         print('You got a coin!')
         coins += 1
         time.sleep(self.wait)
+
+    def hint_to_ld8(self):
+        "converts hint in well to room number"
+        self.action('examine','well')
+        z = self.info['description']  #read the last info to get the hint
+        z = assemb.split('\n')[2:]
+        # with open('hinter.ls8','w') as f:
+        #     for ass in assemb:
+        #         f.write("%s\n" % ass)
+        #quicker way to parse message
+        z = [int(zz,2) for zz in z]
+        chars = [chr(zz) for zz in z]
+        print(chars)
+        char_index = list(range(2,131,5))
+        message = []
+        for c in char_index:
+            message.append(chars[c])
+        mine_room = message[-3:]
+        try:
+            self.mine_room = int(''.join(mine_room))
+        except:
+            try:
+                self.mine_room = int(''.join(mine_room[-2:]))
+            except:
+                self.mine_room = int(''.join(mine_room[-1:]))
+                
+        return self.mine_room
+
+    def get_proof(self):
+        """gets last proof then obtains proof of work
+        then posts new proof to server"""
+        print('Getting proof...')
+        response = requests.get(f'https://lambda-treasure-hunt.herokuapp.com/api/bc/last_proof/', headers=self.header)
+        self.last_proof = json.loads(response.content)
+        print(self.last_proof)
+        my_proof = proof_of_work(self.last_proof['proof'],self.last_proof['difficulty'])
+        self.get_mine(my_proof)
+        time.sleep(self.mine_response['cooldown'])
+    
+    def get_mine(self,new_proof):
+        """posts your new proof to the server - note high cooldown penalties for posting wrong proof"""
+        params = {"proof" : new_proof}
+        response = requests.post(f'https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/', headers=self.header,json = params)
+        self.mine_response = json.loads(response.content)
+        print(self.mine_response)
+
+    def sell_all_items(self):
+        """sells all items if you are in the shop"""
+        self.action('status')
+        inv = self.info['inventory']
+        for i in inv:
+            self.action('sell',i)
+            self.action('confirm_sell',i)
+
