@@ -77,7 +77,7 @@ class mapper:
             time.sleep(20)
             self.get_info(what=what, direction=direction, backtrack=backtrack)
 
-    def action(self, what='take', treasure=None):
+    def action(self, what='take', treasure=None, name=None):
         """another multi purpose request function
         this one focuses on less common actions"""
 
@@ -94,13 +94,9 @@ class mapper:
                 f'{my_url}{what}/', headers=self.header, json={"name": treasure, "confirm": "yes"})
 
         # Change Name +++++++
-        # if what == 'change_name':
-        #     response = request.post(
-        #         f'{my_url}{what}/', headers=self.headers, json={"name": new})
-        # # Confirm Name +++++++
-        # if what == 'confirm_name':
-        #     response = request.post(
-        #         f'{my_url}{what}/', headers=self.headers, json={"confirm": "aye"})
+        if what == 'change_name':
+            response = requests.post(
+                f'{my_url}{what}/', headers=self.header, json={"name": name, "confirm": "aye"})
 
         if response.status_code == 200:
             self.info = json.loads(response.content)
@@ -307,23 +303,30 @@ class mapper:
             token = config('AUTH_KEY')
             headers = {'Authorization': f'Token {token}'}
             r = requests.post(url, headers=headers)
-            # get return data
-            # print(r)
             ret_data = r.json()
-            # print(ret_data, 'retdata')
-            print(f"Current Inventory: {ret_data['inventory']}")
+
+            print(f"***********Current Character Attributes***************")
+            print(ret_data)
+            print("*******************************************************")
+
             #!------------------------This name is specific to each person, be sure to change this to yours.
             if ret_data['name'] == 'player446' and ret_data['gold'] >= 1000:
                 # Go to name changer (pirate ry)
                 print('Time to Buy a Name')
+                # * Made this false here so that we don't somehow pick up a ton of treasure on the way, and
+                # * get over-encumbered.
+                self.accumulate = False
                 self.go_to_room(467)  # pirate ry's room
                 time.sleep(self.wait)
                 # Buy name
-                self.action('change_name')
+                #! -------------------------- Change the name here to be what you want!!
+                self.action('change_name', name='Micah')
                 time.sleep(self.wait)
-                # confirm_name
-                self.action('confirm_name')
-                print('Got a name! Time to get a COIN.', {ret_data['name']})
+
+                #! This print isn't accurate. It doesn't update when you actually change your name.
+                #! Next time you see it, it should have changed though.
+                print(
+                    f"Got a name! Time to get a COIN. New Name: {ret_data['name']}")
                 time.sleep(self.wait)
                 # self.action('status') #Check new name
             elif ret_data['encumbrance'] <= ret_data['strength'] - 2:
@@ -331,6 +334,8 @@ class mapper:
                 # Travel the room bfs style at random
                 # Loot as you go with room_check
                 print('Looting..')
+                # * accumlate is true here since that's the whole point of this block
+                self.accumulate = True
 
                 # self.explore_random(500)
                 self.go_to_room(random.randint(0, 499))
@@ -342,6 +347,8 @@ class mapper:
                 # loop through inventory and sell
                 # Go back to looting
                 print('Need to offload my loot.')
+                # * Setting accumulate to false so we don't get overburdening on the way to shop.
+                self.accumulate = False
                 self.vendor()
                 print('At the shop, time to sell.')
                 for item in ret_data['inventory']:
@@ -352,16 +359,16 @@ class mapper:
                     time.sleep(self.wait)
                     # This doesn't actually update after each sell for some reason.
                     print(f"You're current gold: {ret_data['gold']}")
-                print('Back to Looting', {ret_data['inventory']})
+                print('Back to Looting')
 
 
 """
-need a function to go to name changer and buy a name. 
-funciton to go to wishing well and interact 
+need a function to go to name changer and buy a name.
+funciton to go to wishing well and interact
 function to go to where wishing well says and mine a coin
 
 SHOP is in room id 1
-Name changer is in 467 
-Well is 55 
+Name changer is in 467
+Well is 55
 
 """
