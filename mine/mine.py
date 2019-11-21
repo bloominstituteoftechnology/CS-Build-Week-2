@@ -59,20 +59,6 @@ def mine():
         time.sleep(res['cooldown'])
 
 
-
-def proof(proposedProof):
-    str(proposedProof)
-    check = proposedProof[:difficulty]
-
-    if int(check) is 0:
-        return True
-    else:
-        return False
-
-
-# schedule.every(2).seconds.do(init)
-
-
 while True:
     init()
     mine()
