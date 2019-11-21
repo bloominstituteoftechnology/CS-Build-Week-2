@@ -24,7 +24,7 @@ def proof_of_work(last_proof, difficulty):
             print(total_tries/1000000,'million tries')
 
     
-    if total_tries < 10000000:
+    if total_tries < 6000000:
         print("Proof found: " + str(proof) + " in " + str(timer() - start))
         return proof
     else:
