@@ -125,7 +125,7 @@ def handleRes(res):
                         json={'name': 'tiny treasure'}
                         )
                     cooldown = resTwo['cooldown']
-                    res.raise_for_status()
+                    resTwo.raise_for_status()
                     print("one more tiny treasure")
                 except Exception as err:
                     print("error")
