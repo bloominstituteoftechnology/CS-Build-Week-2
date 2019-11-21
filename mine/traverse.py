@@ -55,6 +55,15 @@ def traverse():
 
     while len(visitedIds) < 500:
 
+        print(currentRoom['room_id'])
+        if currentRoom['room_id'] == 188:
+            break
+
+        if currentRoom['room_id'] == 461:
+            pray()
+            break
+            
+
         connection = connections[str(currentRoom['room_id'])][1]
 
         if 'n' in currentRoom['exits'] and connection['n'] not in visitedIds:
@@ -85,6 +94,12 @@ def traverse():
         else:
             break
 
+def pray():
+    print("SHRINE")
+    res = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/',
+                        headers={'Authorization': str(os.getenv('authToken'))},
+                        json={"confirm": "yes"}
+                        )
 
 def move(dir):
 
@@ -113,24 +128,10 @@ def init():
 
 def handleRes(res):
     if res:    
-        global cooldown
-        res = res.json()
-        if len(res['items']) is not 0:
-            for element in res['items']:
-
-                time.sleep(cooldown)
-                try:
-                    resTwo = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/take/',
-                        headers={'Authorization': str(os.getenv('authToken'))},
-                        json={'name': 'tiny treasure'}
-                        )
-                    cooldown = resTwo['cooldown']
-                    resTwo.raise_for_status()
-                    print("one more tiny treasure")
-                except Exception as err:
-                    print("error")
-
         
+        res = res.json()
+        
+        global cooldown
         cooldown = res['cooldown']
         del res['cooldown']
         del res['players']
@@ -163,8 +164,7 @@ def upateFile():
 
 
 
-# start()
-time.sleep(16) #cooldown is lost upon break of functionality so this needs to be hardcoded
+start()
 init()
 traverse()
 

@@ -8,7 +8,7 @@ verify_ssl = true
 [packages]
 requests = "*"
 python-dotenv = "*"
-win32api = "*"
+schedule = "*"
 
 [requires]
 python_version = "3.7"

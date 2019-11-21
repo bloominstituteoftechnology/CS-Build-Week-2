@@ -53,7 +53,6 @@ def traverse():
 
     global goBackCache
 
-
     while len(visitedIds) < 500:
 
         print(currentRoom['room_id'])
