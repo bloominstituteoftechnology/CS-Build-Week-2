@@ -60,6 +60,5 @@ def mine():
         time.sleep(res['cooldown'])
 
 
-while True:
-    init()
-    mine()
+init()
+mine()
