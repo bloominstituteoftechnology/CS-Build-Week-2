@@ -9,7 +9,7 @@ HLT = 0b00000001
 MUL = 0b10100010
 PUSH = 0b01000101
 POP = 0b01000110
-PRA = 0b
+PRA = 0b01001000
 
 
 class CPU:
@@ -30,6 +30,7 @@ class CPU:
         self.operations[MUL] = self.mul
         self.operations[PUSH] = self.stack_push
         self.operations[POP] = self.stack_pop
+        self.operations[PRA] = self.pra
 
     def load(self, program):
         """Load a program into memory."""
@@ -87,6 +88,12 @@ class CPU:
         """Print operation."""
         reg_a = self.ram_read(self.pc + 1)
         print(self.reg[reg_a])
+        self.pc += 2
+
+    def pra(self):
+        """Print reg value as ASCII"""
+        reg_a = self.ram_read(self.pc + 1)
+        print(chr(self.reg[reg_a]))
         self.pc += 2
 
     def hlt(self):
