@@ -10,20 +10,24 @@ def proof_of_work(last_proof, difficulty):
     start = timer()
 
     print("Searching for next proof")
-    proof = 0
+    proof = 80000000
     total_tries = 0
     prev_proof = f'{last_proof}'.encode()
     last_hash = hashlib.sha256(prev_proof).hexdigest()
     #while valid_proof(last_hash, proof, difficulty) is False:
-    while valid_proof(last_proof, proof, difficulty) is False:
+    while valid_proof(last_proof, proof, difficulty) is False and total_tries < 10000000:
         #proof = random.randint(0, 10000)
-        proof+=1
+        #proof+=1
+        proof = random.randint(0, 100000000)
         total_tries += 1
         if total_tries % 1000000 == 0:
             print(total_tries/1000000,'million tries')
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
-    return proof
+    if total_tries < 10000000:
+        return proof
+    else:
+        return 'rerun'
 
 
 def valid_proof(last_hash, proof, difficulty):

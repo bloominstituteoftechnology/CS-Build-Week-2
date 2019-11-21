@@ -484,8 +484,11 @@ class mapper:
         print(self.last_proof)
         time.sleep(self.last_proof['cooldown'])
         my_proof = proof_of_work(self.last_proof['proof'],self.last_proof['difficulty'])
-        self.get_mine(my_proof)
-        time.sleep(self.mine_response['cooldown'])
+        if my_proof != 'rerun':
+            self.get_mine(my_proof)
+            time.sleep(self.mine_response['cooldown'])
+        else:
+            self.get_proof()
     
     def get_mine(self,new_proof):
         """posts your new proof to the server - note high cooldown penalties for posting wrong proof"""
@@ -505,12 +508,15 @@ class mapper:
             self.action('sell',i)
             self.action('confirm_sell',i)
 
-    def auto_coins(self):
-        self.accumulate = True
+    def auto_coins(self,acc=True,fly=True):
+        self.fly = fly
+        self.accumulate = acc
         while True:
-            if 'encumbrance' in self.info and self.info['encumbrance']>8:
+            self.action('status')
+            if 'encumbrance' in self.info.keys() and self.info['encumbrance']>16:
                 self.dash_to_room(1)
                 self.sell_all_items()
+            
             self.dash_to_room(55)
             self.hint_to_ld8()
             cpu = CPU()
@@ -528,6 +534,8 @@ class mapper:
             print(mine_room)
             self.dash_to_room(mine_room)
             self.get_proof()
+            self.action('balance')  #new lines
+            print(self.info)        #new lines
 
     
 
