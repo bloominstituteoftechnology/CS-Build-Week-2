@@ -124,12 +124,10 @@ def handleRes(res):
                         headers={'Authorization': str(os.getenv('authToken'))},
                         json={'name': 'tiny treasure'}
                         )
-                    cooldown = resTwo['cooldown']
-                    resTwo.raise_for_status()
-                    print("one more tiny treasure")
-                except Exception as err:
-                    print("error")
 
+                    resTwo = resTwo.json()
+                    cooldown = resTwo['cooldown']
+                    print("one more tiny treasure")
         
         cooldown = res['cooldown']
         del res['cooldown']
