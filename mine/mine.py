@@ -1,5 +1,5 @@
 import requests
-""" import schedule """
+import schedule
 import time
 import os
 import json
@@ -25,6 +25,9 @@ def init():
         lastProof = res['proof']
         difficulty = res['difficulty']
         leadingZeros = "0" * difficulty
+        print(lastProof)
+        print(difficulty)
+        print(leadingZeros)
 
         time.sleep(res['cooldown'])
 
@@ -37,14 +40,13 @@ def mine():
     encoded = f'{lastProof}{guess}'.encode()
     hashed = hashlib.sha256(encoded).hexdigest()
 
-    print(hashed[:difficulty], leadingZeros)
-
-    while hashed[:difficulty] is leadingZeros:
+    while hashed[:difficulty] is not leadingZeros:
         guess += random.randrange(3274, 6821)
         encoded = f'{lastProof}{guess}'.encode()
         hashed = hashlib.sha256(encoded).hexdigest()
 
     print(hashed)
+
     res = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/',
                         headers={'Authorization': str(os.getenv('authToken'))},
                         json={'proof': guess}
@@ -68,8 +70,9 @@ def proof(proposedProof):
         return False
 
 
-schedule.every(2).seconds.do(init)
-init()
+# schedule.every(2).seconds.do(init)
+
+
 while True:
-    mine()
     init()
+    mine()
