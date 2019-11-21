@@ -125,6 +125,6 @@ dmypy.json
 .env
 
 #ls8
-.ls8
+.binary.ls8
 
 # End of https://www.gitignore.io/api/django
