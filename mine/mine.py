@@ -36,12 +36,13 @@ def mine():
     global difficulty
     global leadingZeros
 
-    guess = random.randrange(3274, 6821)
+    guess = 1
     encoded = f'{lastProof}{guess}'.encode()
     hashed = hashlib.sha256(encoded).hexdigest()
 
-    while hashed[:difficulty] is not leadingZeros:
-        guess += random.randrange(3274, 6821)
+
+    while hashed[:difficulty] != leadingZeros:
+        guess += 1
         encoded = f'{lastProof}{guess}'.encode()
         hashed = hashlib.sha256(encoded).hexdigest()
 
