@@ -521,6 +521,8 @@ class mapper:
             if 'encumbrance' in self.info.keys() and self.info['encumbrance']>16:
                 self.dash_to_room(1)
                 self.sell_all_items()
+                self.action('status')
+                print(self.info)
             
             self.dash_to_room(55)
             self.hint_to_ld8()
