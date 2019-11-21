@@ -7,6 +7,7 @@ import time
 import random
 import os
 from cpu2 import *
+import datetime
 
 auth_key = config('AUTH_KEY')  # MAKE SURE YPU HAVE .ENV SET UP
 my_url = config('LAMBDA_URL')  # AND PYTHON DECOUPLE INSTALLED
@@ -51,6 +52,8 @@ class mapper:
         self.fly = False
         self.dash = False
         self.important_rooms = {} # May not need this anymore (all special rooms are id'd)
+        self.hour = datetime.datetime.today().hour
+        self.auto_stop = 19
 
     def get_info(self, what='init', direction=None, backtrack=None):
         """multi purpose move & init function - this is used
@@ -509,9 +512,11 @@ class mapper:
             self.action('confirm_sell',i)
 
     def auto_coins(self,acc=True,fly=True):
+        "now added timer stop"
         self.fly = fly
         self.accumulate = acc
-        while True:
+        while True and self.hour<self.auto_stop:
+            self.hour = datetime.datetime.today().hour
             self.action('status')
             if 'encumbrance' in self.info.keys() and self.info['encumbrance']>16:
                 self.dash_to_room(1)
