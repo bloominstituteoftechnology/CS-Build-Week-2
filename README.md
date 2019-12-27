@@ -2,7 +2,7 @@
 
 So far it just builds the map and picks up some treasures along the way.
 
-##To play:
+## To play:
 Start a test server found [here](https://github.com/LambdaSchool/Lambda-Treasure-Hunt--Test).
 - `$ python3 manage.py makemigrations`
 - `$ python3 manage.py migrate`
