@@ -98,7 +98,6 @@ class GamePlayer:
 
             # If we've explored all exits, time to BFS.
             if all([self.world[self.current_room][f'to_{direction}'] is not None for direction in directions]):
-                self.current_room = self.current_room
                 return
 
             # Get all unexplored exits.
