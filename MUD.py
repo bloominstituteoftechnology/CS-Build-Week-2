@@ -1,5 +1,13 @@
 import requests
+# import os
+# 'HOME' in os.environ
+# import sys
+# print(sys.prefix)
+# #print(os.environ['TOKEN'])
 
+# print(os.environ.get('TOKEN'))
+
+#print(token)
 token = "ABC123"
 
 def init():
@@ -11,24 +19,24 @@ def init():
     data = response.json()
     print(data)
 
-def move():
+def move(direction):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"direction":"s"}
+    DATA = {"direction":f"{direction}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
     print(data)
 
 #init()
-#move()
+move("s")
 
-def fastMove():
+def fastMove(direction, nextRoomNumber):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"direction":"s", "next_room_id": "0"}
+    DATA = {"direction":f"{direction}", "next_room_id": f"{nextRoomNumber}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
@@ -37,41 +45,41 @@ def fastMove():
 #init()
 # fastMove()
 
-def pickUpTreasure():
+def pickUpTreasure(treasureName):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/take/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"name":"treasure"}
+    DATA = {"name":f"{treasureName}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
     print(data)
 
-def dropTreasure():
+def dropTreasure(treasureName):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/drop/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"name":"treasure"}
+    DATA = {"name":f"{treasureName}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
     print(data)
 
-def offerTreasureForSale():
+def offerTreasureForSale(treasureName):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/sell/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"name":"treasure"}
+    DATA = {"name":f"{treasureName}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
     print(data)
 
-def sellTreasure():
+def sellTreasure(treasureName):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/sell/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"name":"treasure", "confirm":"yes"}
+    DATA = {"name":f"{treasureName}", "confirm":"yes"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
@@ -96,31 +104,31 @@ def examine():
     data = response.json()
     print(data)
 
-def equipItem():
+def equipItem(equipItem):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/wear/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"name":"[NAME OF WEARABLE]"}
+    DATA = {"name":f"{equipItem}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
     print(data)
 
-def unequipItem():
+def unequipItem(unequipItem):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/undress/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"name":"[NAME OF WEARABLE]"}
+    DATA = {"name":f"{unequipItem}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
     print(data)
 
-def changeName():
+def changeName(newName):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"name":"[NEW NAME]"}
+    DATA = {"name":f"{newName}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
@@ -135,11 +143,11 @@ def pray():
     data = response.json()
     print(data)
 
-def fly():
+def fly(direction):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/fly/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"direction":"n"}
+    DATA = {"direction":f"{direction}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
@@ -155,12 +163,12 @@ def dash():
     data = response.json()
     print(data)
 
-def giveToGhost():
+def giveToGhost(ghostGiveItem):
     # Holds 1 item ONLY - heaviest item
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/carry/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    DATA = {"name":"[ITEM_NAME]"}
+    DATA = {"name":f"{ghostGiveItem}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
@@ -175,11 +183,11 @@ def takeFromGhost():
     data = response.json()
     print(data)
 
-def mine():
+def mine(new_proof):
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/"
     HEADERS = {"Authorization": f"Token {token}", "Content-Type": "application/json"
     }
-    # DATA = {"proof":new_proof}
+    DATA = {"proof":f"{new_proof}"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
