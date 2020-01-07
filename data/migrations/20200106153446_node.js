@@ -7,7 +7,7 @@ exports.up = function(knex) {
       .unique();
     tbl.string('title').notNullable();
     tbl.string('description').notNullable();
-    tbl.string('coordinates').notNullable();
+    tbl.json('coordinates').notNullable();
     tbl.json('exits').notNullable();
     tbl.float('cooldown', 8, 1).notNullable();
     tbl.json('errors').notNullable();

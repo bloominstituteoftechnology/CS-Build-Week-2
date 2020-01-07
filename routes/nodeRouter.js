@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
       room_id,
       title,
       description,
-      coordinates,
+      coordinates: JSON.stringify(coordinates),
       exits: JSON.stringify(exits),
       cooldown,
       errors: JSON.stringify(errors),
