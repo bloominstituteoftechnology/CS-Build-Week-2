@@ -26,7 +26,7 @@ def fastMove():
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/move/"
     HEADERS = {"Authorization": "Token 2b31b01022bf6e2fa8e79e93a7f2db494acdfdd6", "Content-Type": "application/json"
     }
-    DATA = {"direction":"n", "next_room_id": "10"}
+    DATA = {"direction":"s", "next_room_id": "0"}
     response = requests.post(url = URL, headers = HEADERS, json = DATA)
     print(response)
     data = response.json()
