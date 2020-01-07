@@ -6,7 +6,7 @@ exports.up = function(knex) {
     tbl.string('description');
     tbl.string('coordinates');
     tbl.json('exits');
-    tbl.float('cooldown');
+    tbl.decimal('cooldown', 8, 1);
     tbl.json('errors');
     tbl.json('messages');
   });
