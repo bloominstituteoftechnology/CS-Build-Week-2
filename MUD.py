@@ -33,7 +33,7 @@ def fastMove():
     print(data)
 
 #init()
-fastMove()
+# fastMove()
 
 def pickUpTreasure():
     URL = "https://lambda-treasure-hunt.herokuapp.com/api/adv/take/"
