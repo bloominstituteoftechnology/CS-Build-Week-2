@@ -50,6 +50,7 @@ function App() {
 
   const modifyExitToObject = startingRoom => {
     const copyOfstartingRoom = { ...startingRoom };
+    console.log(copyOfstartingRoom);
     const exitsObj = {};
     for (let exit of copyOfstartingRoom.exits) {
       exitsObj[exit] = '?';
@@ -58,7 +59,7 @@ function App() {
     return copyOfstartingRoom;
   };
 
-  const move = async (direction, curr) => {
+  const move = async (direction, curr, visited) => {
     const dirObj = {
       direction: direction
     };
@@ -75,16 +76,17 @@ function App() {
     } catch (error) {
       console.log(error);
     }
+
     return [prev, current];
   };
 
   // ====================
-  const autoMove = (cd, dir, curr) => {
+  const autoMove = (cd, dir, curr, visited) => {
     const time = cd * 1000;
 
     return new Promise(resolve => {
       setTimeout(async () => {
-        const [prev, current] = await move(dir, curr);
+        const [prev, current] = await move(dir, curr, visited);
         resolve([prev, current]);
       }, time); // ms
     });
@@ -136,7 +138,7 @@ function App() {
   // Returns array of unexplored exits of a given room
   const getUnexploredExits = room => {
     let unexplored = [];
-    console.log(room.room_id);
+    console.log('exits in unxplored++++++', room.exits);
     for (const exit in room.exits) {
       if (room.exits[exit] === '?') {
         unexplored.push(exit);
@@ -167,8 +169,10 @@ function App() {
      * 5. move direction
      * 6. update/track exit graph
      **************************************************/
+    let prev;
+    let current;
     const stack = [];
-    let newVisited = {};
+    let visitedGraph = {};
     try {
       const modifiedObject = modifyExitToObject(startingRoom);
       let currObject = {};
@@ -179,107 +183,94 @@ function App() {
       });
       localStorage.setItem('visited', JSON.stringify(visited));
 
-      stack.push(modifiedObject);
-
-      let prev;
-      let current = modifiedObject;
-      let dir = 'w';
-
-      [prev, current] = await autoMove(current.cooldown, dir, current);
-
       // populate graph with initial value
 
-      newVisited = {
+      visitedGraph = {
         ...visited
       };
+
+      stack.push(modifiedObject);
+
+      current = modifiedObject;
+      let dir = 'n';
+
+      [prev, current] = await autoMove(
+        current.cooldown,
+        dir,
+        current,
+        visitedGraph
+      );
 
       // graph to visited
       const prevObj = { ...prev };
       prevObj.exits[dir] = current.room_id;
-      newVisited[prevObj.room_id] = { ...prevObj };
-      localStorage.setItem('visited', JSON.stringify(newVisited));
+      visitedGraph[prevObj.room_id] = { ...prevObj };
+      localStorage.setItem('visited', JSON.stringify(visitedGraph));
 
       const currObj = { ...current };
       currObj.exits[opposites[dir]] = prev.room_id;
 
-      newVisited[currObj.room_id] = { ...currObj };
+      visitedGraph[currObj.room_id] = { ...currObj };
 
-      localStorage.setItem('visited', JSON.stringify(newVisited));
-      console.log(JSON.parse(localStorage.getItem('visited')));
+      localStorage.setItem('visited', JSON.stringify(visitedGraph));
 
       let count = 0;
+      let limit = 3;
 
       // While 'visited' still has "?"s left unfilled...
-      while (count < 10) {
+      while (count < limit) {
         // If we haven't visited the currentRoom...
         if (!visited[current.room_id]) {
           // Add it to 'visited' with "?"s as exits
-          const objtest = {};
-          const copyOfCurrentRoom = {
-            ...current
-          };
-          const exitsObj = {};
-          for (let exit of copyOfCurrentRoom.exits) {
-            exitsObj[exit] = '?';
-          }
-          copyOfCurrentRoom.exits = exitsObj;
-          objtest[current.room_id] = copyOfCurrentRoom;
-          setVisited({
-            ...visited,
-            ...objtest
-          });
-          localStorage.setItem('visited', JSON.stringify(visited));
+          console.log(current);
+          visitedGraph[current.room_id] = current;
+          localStorage.setItem('visited', JSON.stringify(visitedGraph));
         }
 
         // If currentRoom has unexplored exits, pick the first one and move to it, filling out exit info for new room and previous room (PUT)
-        if (currentRoom) {
-          if (getUnexploredExits(visited[current.room_id]).length > 0) {
-            const unexploredRoom = getUnexploredExits(
-              visited[current.room_id]
-            )[0];
-            console.log('unexploredRoom: ', unexploredRoom);
-            console.log(
-              'unexplored exits: ',
-              getUnexploredExits(visited[current.room_id])
-            );
-            try {
-              [prev, current] = await autoMove(
-                current.cooldown,
-                unexploredRoom,
-                current
-              );
-              // console.log(prev, current);
+        let visitedFromLocal = JSON.parse(localStorage.getItem('visited'));
+        if (getUnexploredExits(visitedFromLocal[current.room_id]).length > 0) {
+          const unexploredRoom = getUnexploredExits(
+            visitedFromLocal[current.room_id]
+          )[0];
+          console.log('unexploredRoom: ', unexploredRoom);
+          console.log(
+            'unexplored exits: ',
+            getUnexploredExits(visitedFromLocal[current.room_id])
+          );
 
-              const prevObj = {
-                ...prev
-              };
-              console.log('CURRENT ROOM-----: ', current);
-              console.log('PREVIOUS ROOM-----: ', prev);
-              prevObj.exits[unexploredRoom] = current.room_id;
+          const [prevFromMove, currentFromMove] = await autoMove(
+            current.cooldown,
+            unexploredRoom,
+            current,
+            visitedGraph
+          );
 
-              // const prev = await updateVisited(prevObj);
-              // setVisited({ ...visited, ...prevObj });
-              // localStorage.setItem('visited', JSON.stringify(visited));
+          prev = prevFromMove;
+          current = currentFromMove;
+          // graph to visited
+          const prevObj = { ...prevFromMove };
+          console.log('prevObj: ', prevObj, unexploredRoom, current.room_id);
+          prevObj.exits[dir] = current.room_id;
 
-              // let nextNode = visited[current.room_id];
-              // const nextObj = {
-              //   ...nextNode
-              // };
-              current.exits[opposites[unexploredRoom]] = prev.room_id;
+          visitedGraph[prevObj.room_id] = { ...prevObj };
+          localStorage.setItem('visited', JSON.stringify(visitedGraph));
 
-              setVisited({
-                ...visited,
-                [current.room_id]: current,
-                [prevObj.room_id]: prevObj
-              });
-              localStorage.setItem('visited', JSON.stringify(visited));
-            } catch (error) {
-              console.log(error);
-            }
-          } else {
-            // TODO: backtrack using stack to last room with "?"s
-          }
-          count++;
+          const currObj = { ...currentFromMove };
+          console.log('current: ', currObj, unexploredRoom, prev.room_id);
+          currObj.exits[opposites[dir]] = prev.room_id;
+
+          visitedGraph[currObj.room_id] = { ...currObj };
+
+          localStorage.setItem('visited', JSON.stringify(visitedGraph));
+        } else {
+          // TODO: backtrack using stack to last room with "?"s
+          console.log('Hit a dead end! no ?s left');
+        }
+        count++;
+        console.log(count);
+        if (count === limit) {
+          console.log('Done!');
         }
       }
     } catch (error) {
@@ -328,22 +319,30 @@ function App() {
 
       <div>
         <button
-          onClick={() => autoMove(currentRoom.cooldown, 'n', currentRoom)}
+          onClick={() =>
+            autoMove(currentRoom.cooldown, 'n', currentRoom, visited)
+          }
         >
           N
         </button>
         <button
-          onClick={() => autoMove(currentRoom.cooldown, 's', currentRoom)}
+          onClick={() =>
+            autoMove(currentRoom.cooldown, 's', currentRoom, visited)
+          }
         >
           S
         </button>
         <button
-          onClick={() => autoMove(currentRoom.cooldown, 'e', currentRoom)}
+          onClick={() =>
+            autoMove(currentRoom.cooldown, 'e', currentRoom, visited)
+          }
         >
           E
         </button>
         <button
-          onClick={() => autoMove(currentRoom.cooldown, 'w', currentRoom)}
+          onClick={() =>
+            autoMove(currentRoom.cooldown, 'w', currentRoom, visited)
+          }
         >
           W
         </button>
