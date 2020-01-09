@@ -48,6 +48,16 @@ function App() {
     }
   }, [currentRoom]);
 
+  const modifyExitToObject = startingRoom => {
+    const copyOfstartingRoom = { ...startingRoom };
+    const exitsObj = {};
+    for (let exit of copyOfstartingRoom.exits) {
+      exitsObj[exit] = '?';
+    }
+    copyOfstartingRoom.exits = exitsObj;
+    return copyOfstartingRoom;
+  };
+
   const move = async (direction, curr) => {
     const dirObj = {
       direction: direction
@@ -61,7 +71,7 @@ function App() {
       const res = await axiosWithAuth().post('adv/move/', dirObj);
       setCurrentRoom(res.data);
       prev = visited[curr.room_id];
-      current = res.data;
+      current = modifyExitToObject(res.data);
     } catch (error) {
       console.log(error);
     }
@@ -126,6 +136,7 @@ function App() {
   // Returns array of unexplored exits of a given room
   const getUnexploredExits = room => {
     let unexplored = [];
+    console.log(room.room_id);
     for (const exit in room.exits) {
       if (room.exits[exit] === '?') {
         unexplored.push(exit);
@@ -133,7 +144,6 @@ function App() {
     }
     return unexplored;
   };
-
   // console.log('graph is not complete? ', graphIsNotComplete(visited));
 
   const traverseMap = async startingRoom => {
@@ -145,36 +155,62 @@ function App() {
     //  When we hit a dead-end aka there are no more unexplored exits, we backtrack to a room with unexplored exits
 
     // Use a stack to hold path list to backtrack when we reach a dead-end
-    const stack = [];
 
-    // Add currentRoom to 'visited'
-    // const visited = {};
-    // visited[currentRoom.room_id] = currentRoom;
-    // localStorage.setItem('visited', JSON.stringify(visited));
-    const objtest = {};
-    const copyOfCurrentRoom = {
-      ...currentRoom
-    };
-    const exitsObj = {};
-    for (let exit of copyOfCurrentRoom.exits) {
-      exitsObj[exit] = '?';
-    }
-    copyOfCurrentRoom.exits = exitsObj;
-    objtest[currentRoom.room_id] = copyOfCurrentRoom;
-    setVisited({
-      ...visited,
-      ...objtest
-    });
-    let prev;
-    let current = copyOfCurrentRoom;
+    /**************************************************
+     * starting room
+     * 1. modify exit to object
+     * 2. store modified to visited
+     * 3. add to stack
+     * 4. choose direction
+     *    - any direction no matter if '?' or dir
+     *    - hardcoded(?)
+     * 5. move direction
+     * 6. update/track exit graph
+     **************************************************/
+    const stack = [];
+    let newVisited = {};
     try {
-      stack.push(currentRoom);
+      const modifiedObject = modifyExitToObject(startingRoom);
+      let currObject = {};
+      currObject[modifiedObject.room_id] = modifiedObject;
+      setVisited({
+        ...visited,
+        ...currObject
+      });
+      localStorage.setItem('visited', JSON.stringify(visited));
+
+      stack.push(modifiedObject);
+
+      let prev;
+      let current = modifiedObject;
+      let dir = 'w';
+
+      [prev, current] = await autoMove(current.cooldown, dir, current);
+
+      // populate graph with initial value
+
+      newVisited = {
+        ...visited
+      };
+
+      // graph to visited
+      const prevObj = { ...prev };
+      prevObj.exits[dir] = current.room_id;
+      newVisited[prevObj.room_id] = { ...prevObj };
+      localStorage.setItem('visited', JSON.stringify(newVisited));
+
+      const currObj = { ...current };
+      currObj.exits[opposites[dir]] = prev.room_id;
+
+      newVisited[currObj.room_id] = { ...currObj };
+
+      localStorage.setItem('visited', JSON.stringify(newVisited));
+      console.log(JSON.parse(localStorage.getItem('visited')));
 
       let count = 0;
 
       // While 'visited' still has "?"s left unfilled...
       while (count < 10) {
-        console.log('visited: ', visited);
         // If we haven't visited the currentRoom...
         if (!visited[current.room_id]) {
           // Add it to 'visited' with "?"s as exits
@@ -196,53 +232,55 @@ function App() {
         }
 
         // If currentRoom has unexplored exits, pick the first one and move to it, filling out exit info for new room and previous room (PUT)
-        if (getUnexploredExits(visited[current.room_id]).length > 0) {
-          const unexploredRoom = getUnexploredExits(
-            visited[current.room_id]
-          )[0];
-          console.log('unexploredRoom: ', unexploredRoom);
-          console.log(
-            'unexplored exits: ',
-            getUnexploredExits(visited[current.room_id])
-          );
-          try {
-            [prev, current] = await autoMove(
-              current.cooldown,
-              unexploredRoom,
-              current
+        if (currentRoom) {
+          if (getUnexploredExits(visited[current.room_id]).length > 0) {
+            const unexploredRoom = getUnexploredExits(
+              visited[current.room_id]
+            )[0];
+            console.log('unexploredRoom: ', unexploredRoom);
+            console.log(
+              'unexplored exits: ',
+              getUnexploredExits(visited[current.room_id])
             );
-            // console.log(prev, current);
+            try {
+              [prev, current] = await autoMove(
+                current.cooldown,
+                unexploredRoom,
+                current
+              );
+              // console.log(prev, current);
 
-            const prevObj = {
-              ...prev
-            };
-            console.log('CURRENT ROOM-----: ', current);
-            console.log('PREVIOUS ROOM-----: ', prev);
-            prevObj.exits[unexploredRoom] = current.room_id;
+              const prevObj = {
+                ...prev
+              };
+              console.log('CURRENT ROOM-----: ', current);
+              console.log('PREVIOUS ROOM-----: ', prev);
+              prevObj.exits[unexploredRoom] = current.room_id;
 
-            // const prev = await updateVisited(prevObj);
-            // setVisited({ ...visited, ...prevObj });
-            // localStorage.setItem('visited', JSON.stringify(visited));
+              // const prev = await updateVisited(prevObj);
+              // setVisited({ ...visited, ...prevObj });
+              // localStorage.setItem('visited', JSON.stringify(visited));
 
-            // let nextNode = visited[current.room_id];
-            // const nextObj = {
-            //   ...nextNode
-            // };
-            current.exits[opposites[unexploredRoom]] = prev.room_id;
+              // let nextNode = visited[current.room_id];
+              // const nextObj = {
+              //   ...nextNode
+              // };
+              current.exits[opposites[unexploredRoom]] = prev.room_id;
 
-            setVisited({
-              ...visited,
-              [current.room_id]: current,
-              [prevObj.room_id]: prevObj
-            });
-            localStorage.setItem('visited', JSON.stringify(visited));
-          } catch (error) {
-            console.log(error);
+              setVisited({
+                ...visited,
+                [current.room_id]: current,
+                [prevObj.room_id]: prevObj
+              });
+              localStorage.setItem('visited', JSON.stringify(visited));
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            // TODO: backtrack using stack to last room with "?"s
           }
-        } else {
-          // TODO: backtrack using stack to last room with "?"s
+          count++;
         }
-        count++;
       }
     } catch (error) {
       console.log(error);
@@ -263,7 +301,6 @@ function App() {
 
  * 
  */
-  console.log('state', visited);
   return (
     <div className="App">
       <Navbar />
@@ -311,7 +348,7 @@ function App() {
           W
         </button>
       </div>
-      <button onClick={() => traverseMap()}>TRAVERSE!</button>
+      <button onClick={() => traverseMap(currentRoom)}>TRAVERSE!</button>
     </div>
   );
 }
