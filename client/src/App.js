@@ -8,7 +8,9 @@ import Navbar from './components/Navbar';
 function App() {
   const [currentRoom, setCurrentRoom] = useState();
   const [previousRoom, setPreviousRoom] = useState();
-  const [visited, setVisited] = useState({});
+  const [visited, setVisited] = useState(
+    JSON.parse(localStorage.getItem('visited')) || {}
+  );
   const [graph, setGraph] = useState({});
 
   useEffect(() => {
@@ -148,6 +150,19 @@ function App() {
   };
   // console.log('graph is not complete? ', graphIsNotComplete(visited));
 
+  const wiseExplorerReverse = async (direction, next_room) => {
+    const payload = {
+      direction,
+      next_room
+    };
+
+    try {
+      await axiosWithAuth().post('adv/move/', payload);
+    } catch ({ message }) {
+      console.error(message);
+    }
+  };
+
   const traverseMap = async startingRoom => {
     const opposites = { n: 's', s: 'n', e: 'w', w: 'e' };
 
@@ -171,7 +186,7 @@ function App() {
      **************************************************/
     let prev;
     let current;
-    const stack = [];
+    const stack = []; // [destination, room_id of node]
     let visitedGraph = {};
     try {
       const modifiedObject = modifyExitToObject(startingRoom);
@@ -189,10 +204,11 @@ function App() {
         ...visited
       };
 
-      stack.push(modifiedObject);
+      let dir = 'e'; // hard code first direction here
+      stack.push([opposites[dir], modifiedObject.room_id]);
+      localStorage.setItem('stack', JSON.stringify(stack));
 
       current = modifiedObject;
-      let dir = 'n';
 
       [prev, current] = await autoMove(
         current.cooldown,
@@ -215,10 +231,10 @@ function App() {
       localStorage.setItem('visited', JSON.stringify(visitedGraph));
 
       let count = 0;
-      let limit = 3;
+      let limit = 10;
 
       // While 'visited' still has "?"s left unfilled...
-      while (count < limit) {
+      while (graphIsNotComplete(JSON.parse(localStorage.getItem('visited')))) {
         // If we haven't visited the currentRoom...
         if (!visited[current.room_id]) {
           // Add it to 'visited' with "?"s as exits
@@ -246,19 +262,22 @@ function App() {
             visitedGraph
           );
 
+          stack.push([opposites[unexploredRoom], currentFromMove.room_id]);
+          localStorage.setItem('stack', JSON.stringify(stack));
+
           prev = prevFromMove;
           current = currentFromMove;
           // graph to visited
           const prevObj = { ...prevFromMove };
           console.log('prevObj: ', prevObj, unexploredRoom, current.room_id);
-          prevObj.exits[dir] = current.room_id;
+          prevObj.exits[unexploredRoom] = current.room_id;
 
           visitedGraph[prevObj.room_id] = { ...prevObj };
           localStorage.setItem('visited', JSON.stringify(visitedGraph));
 
           const currObj = { ...currentFromMove };
           console.log('current: ', currObj, unexploredRoom, prev.room_id);
-          currObj.exits[opposites[dir]] = prev.room_id;
+          currObj.exits[opposites[unexploredRoom]] = prev.room_id;
 
           visitedGraph[currObj.room_id] = { ...currObj };
 
@@ -266,6 +285,12 @@ function App() {
         } else {
           // TODO: backtrack using stack to last room with "?"s
           console.log('Hit a dead end! no ?s left');
+          const stackFromLocal = JSON.parse(localStorage.getItem('stack'));
+          stackFromLocal.pop();
+          await wiseExplorerReverse(
+            stackFromLocal[stackFromLocal.length - 1][0], // destination
+            stackFromLocal[stackFromLocal.length - 1][1] // previous node
+          );
         }
         count++;
         console.log(count);
@@ -292,6 +317,8 @@ function App() {
 
  * 
  */
+  // const stackFromLocal = JSON.parse(localStorage.getItem('stack'));
+  // console.log(stackFromLocal[stackFromLocal.length - 2][0]);
   return (
     <div className="App">
       <Navbar />
