@@ -15,18 +15,20 @@ function App() {
 
   useEffect(() => {
     const init = () => {
-      return axiosWithAuth()
-        .get('adv/init/')
-        .then(res => {
-          setCurrentRoom(res.data);
-        })
-        .then(() => {
-          axiosWithAuth()
-            .post('adv/status/', {})
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
-        })
-        .catch(err => console.log(err));
+      return (
+        axiosWithAuth()
+          .get('adv/init/')
+          .then(res => {
+            setCurrentRoom(res.data);
+          })
+          // .then(() => {
+          //   axiosWithAuth()
+          //     .post('adv/status/', {})
+          //     .then(res => console.log(res))
+          //     .catch(err => console.log(err));
+          // })
+          .catch(err => console.log(err))
+      );
     };
     setVisited(JSON.parse(localStorage.getItem('visited')));
     init();
@@ -156,17 +158,24 @@ function App() {
   };
   // console.log('graph is not complete? ', graphIsNotComplete(visited));
 
-  const wiseExplorerReverse = async (direction, next_room) => {
+  const wiseExplorerReverse = async (direction, curr, visited) => {
     const payload = {
       direction,
-      next_room
+      next_room_id: `${curr.room_id}`
     };
+    let prev;
+    let current;
 
     try {
-      await axiosWithAuth().post('adv/move/', payload);
+      setPreviousRoom(visited[curr.room_id]);
+      const res = await axiosWithAuth().post('adv/move/', payload);
+      setCurrentRoom(res.data);
+      prev = visited[curr.room_id];
+      current = modifyExitToObject(res.data);
     } catch ({ message }) {
       console.error(message);
     }
+    return [prev, current];
   };
 
   const traverseMap = async startingRoom => {
@@ -211,7 +220,7 @@ function App() {
       };
 
       let dir = 'e'; // hard code first direction here
-      stack.push([opposites[dir], modifiedObject.room_id]);
+      stack.push([opposites[dir], modifiedObject]);
       localStorage.setItem('stack', JSON.stringify(stack));
 
       current = modifiedObject;
@@ -268,7 +277,7 @@ function App() {
             visitedGraph
           );
 
-          stack.push([opposites[unexploredRoom], currentFromMove.room_id]);
+          stack.push([opposites[unexploredRoom], currentFromMove]);
           localStorage.setItem('stack', JSON.stringify(stack));
 
           prev = prevFromMove;
@@ -294,16 +303,16 @@ function App() {
           const stackFromLocal = JSON.parse(localStorage.getItem('stack'));
           stackFromLocal.pop();
           setTimeout(async () => {
-            await wiseExplorerReverse(
+            const [prevFromWise, currentFromWise] = await wiseExplorerReverse(
               stackFromLocal[stackFromLocal.length - 1][0], // destination
-              stackFromLocal[stackFromLocal.length - 1][1] // previous node
+              stackFromLocal[stackFromLocal.length - 1][1], // previous node
+              JSON.parse(localStorage.getItem('visited'))
             );
+            prev = prevFromWise;
+            current = currentFromWise;
           }, current.cooldown * 1000);
-        }
-        count++;
-        console.log(count);
-        if (count === limit) {
-          console.log('Done!');
+
+          continue;
         }
       }
     } catch (error) {
