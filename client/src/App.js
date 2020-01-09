@@ -192,6 +192,7 @@ function App() {
             ...visited,
             ...objtest
           });
+          localStorage.setItem('visited', JSON.stringify(visited));
         }
 
         // If currentRoom has unexplored exits, pick the first one and move to it, filling out exit info for new room and previous room (PUT)
