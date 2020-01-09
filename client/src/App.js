@@ -20,6 +20,12 @@ function App() {
         .then(res => {
           setCurrentRoom(res.data);
         })
+        .then(() => {
+          axiosWithAuth()
+            .post('adv/status/', {})
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+        })
         .catch(err => console.log(err));
     };
     setVisited(JSON.parse(localStorage.getItem('visited')));
@@ -287,10 +293,12 @@ function App() {
           console.log('Hit a dead end! no ?s left');
           const stackFromLocal = JSON.parse(localStorage.getItem('stack'));
           stackFromLocal.pop();
-          await wiseExplorerReverse(
-            stackFromLocal[stackFromLocal.length - 1][0], // destination
-            stackFromLocal[stackFromLocal.length - 1][1] // previous node
-          );
+          setTimeout(async () => {
+            await wiseExplorerReverse(
+              stackFromLocal[stackFromLocal.length - 1][0], // destination
+              stackFromLocal[stackFromLocal.length - 1][1] // previous node
+            );
+          }, current.cooldown * 1000);
         }
         count++;
         console.log(count);
