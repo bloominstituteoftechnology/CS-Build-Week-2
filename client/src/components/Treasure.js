@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import data from '../data/test.json';
 
-const Treasure = ({ currentRoom }) => {
+const Treasure = ({ currentRoom, findNextDirection, directionUpdater }) => {
   const [pathState, setPathState] = useState([]);
   const [bfs, setBfs] = useState('');
 
@@ -15,8 +15,6 @@ const Treasure = ({ currentRoom }) => {
   };
 
   const bfsTraverse = async (startingVertex, target_id) => {
-    startingVertex = data[0];
-
     const q = [];
     q.unshift([startingVertex]);
     const visited = {};
@@ -54,6 +52,17 @@ const Treasure = ({ currentRoom }) => {
           {pathState.length ? pathState[pathState.length - 1].title : 'NA'}
         </p>
         <p>Steps: {pathState.length && pathState.length}</p>
+        <p>
+          {pathState.map((room, index, arr) => {
+            if (index < arr.length - 1) {
+              return findNextDirection(
+                room.room_id,
+                data,
+                arr[index + 1].room_id
+              );
+            }
+          })}
+        </p>
       </div>
       <form onSubmit={traverseHandler}>
         <label htmlFor="bfs">Find room path: </label>

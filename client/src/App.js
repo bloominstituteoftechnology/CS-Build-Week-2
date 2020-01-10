@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { axiosWithAuth } from './util/axiosWithAuth.js';
+import data from './data/test.json';
+
+import Treasure from './components/Treasure';
 
 import './App.scss';
 import Navbar from './components/Navbar';
@@ -11,6 +14,7 @@ function App() {
   const [visited, setVisited] = useState(
     JSON.parse(localStorage.getItem('visited')) || {}
   );
+  const [path, setPath] = useState([]);
 
   useEffect(() => {
     const init = () => {
@@ -49,6 +53,10 @@ function App() {
     }
   }, [currentRoom]);
 
+  const directionUpdater = direction => {
+    setPath([...path, direction]);
+  };
+
   // Map Functions ===================================================================
   const modifyExitToObject = startingRoom => {
     const copyOfstartingRoom = { ...startingRoom };
@@ -61,10 +69,21 @@ function App() {
     return copyOfstartingRoom;
   };
 
-  const move = async (direction, curr, visited) => {
-    const dirObj = {
-      direction: direction
-    };
+  const move = async (direction, curr, visited, map) => {
+    let nextRoom = findNextRoom(curr.room_id, map, direction);
+
+    let dirObj;
+
+    if (nextRoom) {
+      dirObj = {
+        direction: direction,
+        next_room_id: `${nextRoom}`
+      };
+    } else {
+      dirObj = {
+        direction: direction
+      };
+    }
 
     let prev;
     let current;
@@ -78,7 +97,7 @@ function App() {
     } catch (error) {
       console.log(error);
     }
-
+    console.log('prev: ', prev, 'current: ', current);
     return [prev, current];
   };
 
@@ -87,7 +106,7 @@ function App() {
 
     return new Promise(resolve => {
       setTimeout(async () => {
-        const [prev, current] = await move(dir, curr, visited);
+        const [prev, current] = await move(dir, curr, visited, data);
 
         resolve([prev, current]);
       }, time); // ms
@@ -127,6 +146,20 @@ function App() {
       status = true;
     }
     return status;
+  };
+
+  const delay = seconds =>
+    new Promise(resolver => setTimeout(() => resolver(), seconds * 1000));
+
+  const getStatus = async () => {
+    await delay(1);
+    try {
+      let res = await axiosWithAuth().post('adv/status/');
+      console.log('status res: ', res);
+      return res.data;
+    } catch ({ message }) {
+      console.log(message);
+    }
   };
 
   const wiseExplorerReverse = async (direction, curr, visited) => {
@@ -174,22 +207,27 @@ function App() {
   };
 
   // Treasure Functions ===================================================================
-  const collectTreasure = room => {
+  const collectTreasure = async room => {
     // Check if room
     if (
-      room.items.includes('shiny treasure' || 'tiny treasure' || 'treasure')
+      room.items.includes(
+        'shiny treasure' || 'tiny treasure' || 'small treasure'
+      )
     ) {
-      // const status = getStatus()
-      const status = sampleStatus;
-      if (status.encumbrance === status.strength) {
-        return "You can't carry any more stuff right now.";
-      } else {
-        room.items.forEach(item => {
-          if (status.encumbrance + 1 <= status.strength) {
+      try {
+        let status = await getStatus();
+        console.log(status);
+        if (status.encumbrance === status.strength) {
+          return "You can't carry any more stuff right now.";
+        } else {
+          room.items.forEach(item => {
             const treasureObj = { name: item };
+            console.log('treasureObj', treasureObj);
             takeTreasure(treasureObj);
-          }
-        });
+          });
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
   };
@@ -302,6 +340,8 @@ function App() {
         visitedGraph
       );
 
+      collectTreasure(current);
+
       // graph to visited
       const prevObj = { ...prev };
       prevObj.exits[dir] = current.room_id;
@@ -349,6 +389,8 @@ function App() {
             current,
             visitedGraph
           );
+          console.log('current: ', current);
+          collectTreasure(currentFromMove);
 
           stack.push([opposites[unexploredRoom], currentFromMove]);
           console.log('stack inside while: ', stack);
@@ -406,7 +448,6 @@ function App() {
   return (
     <div className="App">
       <Navbar />
-
       {currentRoom && (
         <div>
           {currentRoom.title}
@@ -430,7 +471,6 @@ function App() {
             : 'No items in room'}
         </div>
       )}
-
       <div>
         <button
           onClick={() =>
@@ -462,6 +502,18 @@ function App() {
         </button>
       </div>
       <button onClick={() => traverseMap(currentRoom)}>TRAVERSE!</button>
+      <button onClick={() => collectTreasure(currentRoom)}>
+        COLLECT TREASURE!
+      </button>
+      <div>
+        <br />
+        <br />
+        <Treasure
+          findNextDirection={findNextDirection}
+          currentRoom={currentRoom}
+          directionUpdater={directionUpdater}
+        />
+      </div>
     </div>
   );
 }
