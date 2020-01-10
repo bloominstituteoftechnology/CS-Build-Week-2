@@ -11,6 +11,7 @@ function App() {
   const [visited, setVisited] = useState(
     JSON.parse(localStorage.getItem('visited')) || {}
   );
+
   const [graph, setGraph] = useState({});
 
   useEffect(() => {
@@ -97,6 +98,7 @@ function App() {
     return new Promise(resolve => {
       setTimeout(async () => {
         const [prev, current] = await move(dir, curr, visited);
+
         resolve([prev, current]);
       }, time); // ms
     });
@@ -161,7 +163,7 @@ function App() {
   const wiseExplorerReverse = async (direction, curr, visited) => {
     const payload = {
       direction,
-      next_room_id: `${curr.room_id}`
+      next_room_id: `${curr}`
     };
     let prev;
     let current;
@@ -178,8 +180,18 @@ function App() {
     return [prev, current];
   };
 
+  const checkIfBothTrue = (bool1, bool2) => {
+    let status = false;
+    if (bool1 === true && bool2 === true) {
+      status = true;
+    }
+    return status;
+  };
+
+  const bfs = target => {};
+
   const traverseMap = async startingRoom => {
-    const opposites = { n: 's', s: 'n', e: 'w', w: 'e' };
+    const opposites = { n: 's', s: 'n', e: 'w', w: 'e', '?': '?' };
 
     //  Start in a room
     //  Add room to OUR graph with ?s for exits (100: n: ?, s: ?)
@@ -219,8 +231,9 @@ function App() {
         ...visited
       };
 
-      let dir = 'e'; // hard code first direction here
+      let dir = '?'; // hard code first direction here
       stack.push([opposites[dir], modifiedObject]);
+      console.log('stored!!', stack);
       localStorage.setItem('stack', JSON.stringify(stack));
 
       current = modifiedObject;
@@ -247,11 +260,14 @@ function App() {
 
       let count = 0;
       let limit = 10;
-
+      const copyOfVisited = JSON.parse(localStorage.getItem('visited'));
+      const visitedLength = Object.keys(copyOfVisited).length;
       // While 'visited' still has "?"s left unfilled...
-      while (graphIsNotComplete(JSON.parse(localStorage.getItem('visited')))) {
+      while (
+        checkIfBothTrue(graphIsNotComplete(copyOfVisited), visitedLength < 500)
+      ) {
         // If we haven't visited the currentRoom...
-        if (!visited[current.room_id]) {
+        if (!visitedGraph[current.room_id]) {
           // Add it to 'visited' with "?"s as exits
           console.log(current);
           visitedGraph[current.room_id] = current;
@@ -278,6 +294,7 @@ function App() {
           );
 
           stack.push([opposites[unexploredRoom], currentFromMove]);
+          console.log('stack inside while: ', stack);
           localStorage.setItem('stack', JSON.stringify(stack));
 
           prev = prevFromMove;
@@ -288,29 +305,39 @@ function App() {
           prevObj.exits[unexploredRoom] = current.room_id;
 
           visitedGraph[prevObj.room_id] = { ...prevObj };
-          localStorage.setItem('visited', JSON.stringify(visitedGraph));
+          // localStorage.setItem('visited', JSON.stringify(visitedGraph));
 
           const currObj = { ...currentFromMove };
           console.log('current: ', currObj, unexploredRoom, prev.room_id);
           currObj.exits[opposites[unexploredRoom]] = prev.room_id;
 
           visitedGraph[currObj.room_id] = { ...currObj };
-
+          console.log('visitedGraph:', visitedGraph);
           localStorage.setItem('visited', JSON.stringify(visitedGraph));
         } else {
           // TODO: backtrack using stack to last room with "?"s
           console.log('Hit a dead end! no ?s left');
-          const stackFromLocal = JSON.parse(localStorage.getItem('stack'));
-          stackFromLocal.pop();
-          setTimeout(async () => {
-            const [prevFromWise, currentFromWise] = await wiseExplorerReverse(
-              stackFromLocal[stackFromLocal.length - 1][0], // destination
-              stackFromLocal[stackFromLocal.length - 1][1], // previous node
-              JSON.parse(localStorage.getItem('visited'))
-            );
-            prev = prevFromWise;
-            current = currentFromWise;
-          }, current.cooldown * 1000);
+          let direction = stack.pop();
+          localStorage.setItem('stack', JSON.stringify(stack));
+          console.log('direction in ELSE: ', direction);
+          const [prevFromMove, currentFromMove] = await autoMove(
+            current.cooldown,
+            direction[0],
+            current,
+            visitedGraph
+          );
+          prev = prevFromMove;
+          current = currentFromMove;
+
+          // setTimeout(async () => {
+          //   const [prevFromWise, currentFromWise] = await wiseExplorerReverse(
+          //     stackFromLocal[stackFromLocal.length - 1][0], // destination
+          //     stackFromLocal[stackFromLocal.length - 1][0], // previous node
+          //     JSON.parse(localStorage.getItem('visited'))
+          //   );
+          //   prev = prevFromWise;
+          //   current = currentFromWise;
+          // }, current.cooldown * 1000);
 
           continue;
         }
@@ -352,6 +379,9 @@ function App() {
           <br />
           <br />
           Exits: {currentRoom.exits}
+          <br />
+          <br />
+          CD: {currentRoom.cooldown}
           <br />
           <br />
           Items:{' '}
