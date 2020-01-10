@@ -4,7 +4,6 @@ import { axiosWithAuth } from './util/axiosWithAuth.js';
 
 import './App.scss';
 import Navbar from './components/Navbar';
-import FindRoom from './components/Treasure';
 
 function App() {
   const [currentRoom, setCurrentRoom] = useState();
@@ -404,23 +403,6 @@ function App() {
       console.log(error);
     }
   };
-  /**
- * 
-      queue = Queue()
-      visited = set()
-      queue.enqueue(starting_vertex)
-      while queue.size() > 0:
-          current_node = queue.dequeue()
-          if current_node not in visited:
-              visited.add(current_node)
-              print("Node: ", current_node)
-              for neighbor in self.get_neighbors(current_node):
-                  queue.enqueue(neighbor)
-
- * 
- */
-  // const stackFromLocal = JSON.parse(localStorage.getItem('stack'));
-  // console.log(stackFromLocal[stackFromLocal.length - 2][0]);
   return (
     <div className="App">
       <Navbar />
@@ -480,9 +462,6 @@ function App() {
         </button>
       </div>
       <button onClick={() => traverseMap(currentRoom)}>TRAVERSE!</button>
-      <br />
-      <br />
-      <FindRoom currentRoom={currentRoom} />
     </div>
   );
 }
