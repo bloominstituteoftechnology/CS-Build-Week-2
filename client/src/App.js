@@ -4,6 +4,7 @@ import { axiosWithAuth } from './util/axiosWithAuth.js';
 
 import './App.scss';
 import Navbar from './components/Navbar';
+import FindRoom from './components/Treasure';
 
 function App() {
   const [currentRoom, setCurrentRoom] = useState();
@@ -479,6 +480,9 @@ function App() {
         </button>
       </div>
       <button onClick={() => traverseMap(currentRoom)}>TRAVERSE!</button>
+      <br />
+      <br />
+      <FindRoom currentRoom={currentRoom} />
     </div>
   );
 }
