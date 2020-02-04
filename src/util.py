@@ -50,14 +50,15 @@ class Graph:
         self.vertices[vertex]["exits"] = exits
         self.vertices[vertex]["messages"] = messages
 
-    def add_edge(self, v1, v2):
+    def add_edge(self, v1, direction, v2):
         """
         Add a directed edge to the graph.
         """
+        
         if v1 in self.vertices and v2 in self.vertices:
-            self.vertices[v1].add(v2)
+            self.vertices[v1]["exits"][direction] = v2
         else:
-            raise IndexError("That vertex does not exist.")
+            raise IndexError("That vertex does not exist")
 
     def bft(self, starting_vertex):
         """
@@ -164,10 +165,53 @@ class Graph:
                         return v
                     visited.add(v[-1])
                     # Then add all of its neighbors to the back of the queue
-                    for neighbor in self.vertices[v[-1]]:
+                    for neighbor in self.vertices[v[-1]]["exits"].values():
                         z = v[:]
                         z.append(neighbor)
                         q.enqueue(z)
+        return None
+    
+    def unexplored_search(self, starting_vertex):
+        """
+        Return a list containing the shortest path from
+        starting_vertex to destination_vertex in
+        breath-first order.
+        """
+        # Create an empty queue and enqueue A PATH TO the starting vertex ID
+        # Create a Set to store visited vertices
+        # While the queue is not empty...
+            # Dequeue the first PATH
+            # Grab the last vertex from the PATH
+            # If that vertex has not been visited...
+                # CHECK IF IT'S THE TARGET
+                  # IF SO, RETURN PATH
+                # Mark it as visited...
+                # Then add A PATH TO its neighbors to the back of the queue
+                  # COPY THE PATH
+                  # APPEND THE NEIGHOR TO THE BACK
+        
+                # Create an empty queue and enqueue the starting vertex ID
+        q = Queue()
+        q.enqueue([starting_vertex])
+        # Create an empty Set to store visited vertices
+        visited = set()
+        # While the queue is not empty...
+        while q.size() > 0:
+            # Dequeue the first vertex
+            v = q.dequeue()
+            # If that vertex has not been visited...
+            if v is not None:
+                if v[-1] not in visited:
+                    # Mark it as visited
+                    if '?' in self.vertices[v[-1]]["exits"].values():
+                        return v
+                    visited.add(v[-1])
+                    # Then add all of its neighbors to the back of the queue
+                    for neighbor in self.vertices[v[-1]]["exits"].values():
+                        z = v[:]
+                        z.append(neighbor)
+                        q.enqueue(z)
+        return None
 
     def adventure_solution(self, starting_vertex):
         """
