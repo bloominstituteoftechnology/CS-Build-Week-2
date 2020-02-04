@@ -7,8 +7,17 @@ import sys
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
+from special_rooms import *
+
 #my_token = sys.argv[1]
 my_token = "Token 9a118462c7930cbb7786d91ceeedf67f3d76c643"
+base_url = "https://lambda-treasure-hunt.herokuapp.com/api/adv/"
+
+r = requests.get("https://raw.githubusercontent.com/build-week-pt2/CS-Build-Week-2/matt/room_info.json")
+room_information = dict(r.json())
+r = requests.get("https://raw.githubusercontent.com/build-week-pt2/CS-Build-Week-2/matt/room_map.json")
+traversial_graph = dict(r.json())
+
 
 class Player:
 
@@ -16,10 +25,13 @@ class Player:
     def __init__(self):
         self.token = my_token
         r = requests.get(
-            "https://lambda-treasure-hunt.herokuapp.com/api/adv/init/",
+            base_url + "init/",
             headers = {"Authorization": self.token}
         )
-        pp.pprint(dict(r.json()))
+        response = dict(r.json())
+        self.current_room_id = response['room_id']
+        pp.pprint(response)
+
 
 
     def move(self, direction, wise_travel = None):
@@ -47,6 +59,8 @@ class Player:
         response = dict(r.json())
         print(f"Waiting {response['cooldown']} seconds for cooldown.")
         sleep(response['cooldown'])
+        self.current_room_id = response['room_id']
+        pp.pprint(response)
         return response
 
 
@@ -59,7 +73,9 @@ class Player:
                 "Content-Type": "application/json"
             }
         )
-        return r.json()
+        response = dict(r.json())
+        pp.pprint(response)
+        return response
 
 
     def drop(self, item):
@@ -71,7 +87,9 @@ class Player:
                 "Content-Type": "application/json"
             }
         )
-        return r.json()
+        response = dict(r.json())
+        pp.pprint(response)
+        return response
 
 
     def sell(self, item, confirm = True):
@@ -96,7 +114,9 @@ class Player:
                     "Content-Type": "application/json"
                 }
             )
-        return r.json()
+        response = dict(r.json())
+        pp.pprint(response)
+        return response
 
 
     def status(self):
@@ -107,7 +127,9 @@ class Player:
                 "Content-Type": "application/json"
             }
         )
-        return r.json()
+        response = dict(r.json())
+        pp.pprint(response)
+        return response
 
 
     def examine(self, name):
@@ -119,7 +141,9 @@ class Player:
                 "Content-Type": "application/json"
             }
         )
-        return r.json()
+        response = dict(r.json())
+        pp.pprint(response)
+        return response
 
 
     def wear(self, item):
@@ -131,7 +155,9 @@ class Player:
                 "Content-Type": "application/json"
             }
         )
-        return r.json()
+        response = dict(r.json())
+        pp.pprint(response)
+        return response
 
 
     def undress(self, item):
@@ -143,7 +169,9 @@ class Player:
                 "Content-Type": "application/json"
             }
         )
-        return r.json()
+        response = dict(r.json())
+        pp.pprint(response)
+        return response
 
 
     def change_name(self, new_name):
@@ -155,7 +183,9 @@ class Player:
                 "Content-Type": "application/json"
             }
         )
-        return r.json()
+        response = dict(r.json())
+        pp.pprint(response)
+        return response
 
 
     def pray(self):
@@ -166,4 +196,25 @@ class Player:
                 "Content-Type": "application/json"
             }
         )
-        return r.json()
+        response = dict(r.json())
+        pp.pprint(response)
+        return response
+
+    #def treasure_hunt(self, threshhold):
+        # while gold under threshhold
+        while self.status['gold'] < threshhold
+            #while encumbrance < strength
+            while self.status['encumbrance'] < self.status['strength']
+                # pick a random direction
+                # wise travel
+                # if item treasure
+                # pick it up
+            #go to shop and sell treasure
+
+    def destination_travel(self, destination):
+        destination_map = map_to_destination(self.current_room_id, destination)
+
+        while room_information[str(self.current_room_id)]["title"] != destination:
+            direction = destination_map[str(self.current_room_id)]
+            wise_travel_id = traversial_graph[str(self.current_room_id)][direction]
+            self.move(direction, wise_travel_id)

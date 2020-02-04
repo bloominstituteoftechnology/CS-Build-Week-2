@@ -1,3 +1,8 @@
+import json
+with open("room_map.json") as f:
+    traversial_graph = json.load(f)
+    f.close()
+
 class Queue():
     def __init__(self):
         self.queue = []
