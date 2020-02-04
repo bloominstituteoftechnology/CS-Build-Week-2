@@ -12,6 +12,10 @@ headers = {
 'Content-Type': 'application/json'
 }
 
+node_headers = {
+'Content-Type': 'application/json'
+}
+
 world_graph = Graph()
 
 explored_rooms = set()
@@ -24,7 +28,7 @@ direction = 's'
 
 dir_reverse = {"n":"s","s":"n","e":"w","w":"e"}
 
-while len(explored_rooms) < 10:
+while len(explored_rooms) < 3:
 
     contains_unexplored = False
     for i in exits:
@@ -33,7 +37,6 @@ while len(explored_rooms) < 10:
             direction = i
     if contains_unexplored is True:
         payloads = {"direction": direction}
-
         response = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', data=json.dumps(payloads), headers=headers).json()
         print(response)
         exits = {}
@@ -68,7 +71,12 @@ while len(explored_rooms) < 10:
         
         while len(modified_path) > 0:
             bfsdir = modified_path.pop(0)
-            payloads = {"direction": bfsdir}
+            print('about to move in this direction: ', bfsdir, " to: ", world_graph.vertices[last_room_id]["exits"][bfsdir])
+            if world_graph.vertices[last_room_id]["exits"][bfsdir] != '?':
+                payloads = {"direction": bfsdir, "next_room_id": str(world_graph.vertices[last_room_id]["exits"][bfsdir])}
+                print('wise explorer activated, payload: ', payloads)
+            else:
+                payloads = {"direction": bfsdir}
 
             response = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', data=json.dumps(payloads), headers=headers).json()
             print(response)
@@ -80,8 +88,9 @@ while len(explored_rooms) < 10:
             last_room_id = response["room_id"]
         exits = world_graph.vertices[response["room_id"]]["exits"]
 
-
-
+for i in world_graph.vertices:    
+    post_room = requests.post('https://bw2rooms.herokuapp.com/api/room/addRoom', data=json.dumps(world_graph.vertices[i]),headers=node_headers).json()
+    print(post_room)
 
 # # Once done looping, add everything to database
 

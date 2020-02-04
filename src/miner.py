@@ -2,7 +2,6 @@ import hashlib
 
 import sys
 from uuid import uuid4
-
 import requests
 import os
 from dotenv import load_dotenv
