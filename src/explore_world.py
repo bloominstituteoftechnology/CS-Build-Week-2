@@ -14,21 +14,29 @@ world_graph = Graph()
 
 explored_rooms = set()
 
+last_room = 0
 
+world_graph.add_vertex(0,  "A brightly lit room",  "You are standing in the center of a brightly lit room. You notice a shop to the west and exits to the north, south and east.",  "(60,60)",  0,  "NORMAL",  [],  ['?','?','?','?'], ["You have walked south."])
 
-while len(explored_rooms) < 500:
+# while len(explored_rooms) < 500:
+    
+#     direction = response[""]
 
-    data = {"direction":direction}
+#     data = {"direction":direction}
 
-    response = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', headers=headers, data=data)
+#     response = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', headers=headers, data=data)
 
-    world_graph.add_vertex(response["room_id"],response["title"],response["description"],response["coordinates"],response["elevation"],response["terrain"],response["items"],response["exits"],response["messages"])
+#     exits = response["exits"]
 
-    cooldown = response["cooldown"]
+#     if response["room_id"] not in explored_rooms:
+#         world_graph.add_vertex(response["room_id"],response["title"],response["description"],response["coordinates"],response["elevation"],response["terrain"],response["items"],exits,response["messages"])
 
-    r = Timer(cooldown + 1, add_explored, (explored_rooms,response["room_id"]))
+#     cooldown = response["cooldown"]
 
+#     r = Timer(cooldown + 1, add_explored, (explored_rooms,response["room_id"]))
 
+#     last_room = response["room_id"]
 
 # Once done looping, add everything to database
 
+print(world_graph.vertices[0]["exits"])

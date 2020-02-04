@@ -1,6 +1,9 @@
 import time
 import random
 
+def add_explored(set1,room_id):
+    set1.add(room_id)
+
 class Queue():
     def __init__(self):
         self.queue = []
@@ -32,11 +35,20 @@ class Graph:
     def __init__(self):
         self.vertices = {}
 
-    def add_vertex(self, vertex):
+    def add_vertex(self, vertex, title, description, coordinates, elevation, terrain, items, exits, messages):
         """
         Add a vertex to the graph.
         """
-        self.vertices[vertex] = set()
+        self.vertices[vertex] = {}
+        self.vertices[vertex]["room_id"] = vertex
+        self.vertices[vertex]["title"] = title
+        self.vertices[vertex]["description"] = description
+        self.vertices[vertex]["coordinates"] = coordinates
+        self.vertices[vertex]["elevation"] = elevation
+        self.vertices[vertex]["terrain"] = terrain
+        self.vertices[vertex]["items"] = items
+        self.vertices[vertex]["exits"] = exits
+        self.vertices[vertex]["messages"] = messages
 
     def add_edge(self, v1, v2):
         """
@@ -115,6 +127,7 @@ class Graph:
                     s.push(neighbor)                    
 
 
+
     def bfs(self, starting_vertex, destination_vertex):
         """
         Return a list containing the shortest path from
@@ -173,9 +186,7 @@ class Graph:
             # Pop the first vertex
             v = s.pop()
             count = 0
-            sortd = list(self.vertices[v])
-            random.shuffle(sortd)
-            for neighbor in sortd:
+            for neighbor in self.vertices[v]:
                 if neighbor not in visited:
                     count += 1
             # If that vertex has not been visited...
@@ -186,9 +197,11 @@ class Graph:
                 
                 # Then add all of its neighbors to the top of the stack
             loops = []
-            for neighbor in sortd:
-                if neighbor not in visited:
+            pushed = False
+            for neighbor in self.vertices[v]:
+                if neighbor not in visited and pushed is False:
                     s.push(neighbor)
+                    pushed = True
 
             if count > 1:
                 return_points.push(v)
@@ -199,13 +212,12 @@ class Graph:
                     s.push(backtrack)
         return directions
 
-
     def dfs(self, starting_vertex, destination_vertex):
         """
         Return a list containing a path from
         starting_vertex to destination_vertex in
         depth-first order.
-        """
+        """ 
         s = Stack()
         s.push([starting_vertex])
         # Create an empty Set to store visited vertices
