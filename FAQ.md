@@ -114,9 +114,7 @@ In the room that has `Pirate Ry` in its title.
 <a name="q800"></a>
 ### Where do we mine the coins?
 
-Once you've changed your name, reach out to your TL and they'll tell you the
-next step. It'll be an interview, and once you've passed that, you'll get a hint
-to where the mining room is.
+You may find the path to wealth in the waters of the wishing well.
 
 ---------------------------------------------------------------------------------------
 
