@@ -28,7 +28,7 @@ direction = 's'
 
 dir_reverse = {"n":"s","s":"n","e":"w","w":"e"}
 
-while len(explored_rooms) < 3:
+while len(explored_rooms) < 500:
 
     contains_unexplored = False
     for i in exits:
@@ -93,5 +93,3 @@ for i in world_graph.vertices:
     print(post_room)
 
 # # Once done looping, add everything to database
-
-# print(world_graph.vertices[0]["exits"])

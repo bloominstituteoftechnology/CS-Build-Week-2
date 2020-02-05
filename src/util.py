@@ -212,6 +212,48 @@ class Graph:
                         z.append(neighbor)
                         q.enqueue(z)
         return None
+    
+    def walk_to_room(self, starting_vertex, destination_vertex):
+        """
+        Return a list containing the shortest path from
+        starting_vertex to destination_vertex in
+        breath-first order.
+        """
+        # Create an empty queue and enqueue A PATH TO the starting vertex ID
+        # Create a Set to store visited vertices
+        # While the queue is not empty...
+            # Dequeue the first PATH
+            # Grab the last vertex from the PATH
+            # If that vertex has not been visited...
+                # CHECK IF IT'S THE TARGET
+                  # IF SO, RETURN PATH
+                # Mark it as visited...
+                # Then add A PATH TO its neighbors to the back of the queue
+                  # COPY THE PATH
+                  # APPEND THE NEIGHOR TO THE BACK
+        
+                # Create an empty queue and enqueue the starting vertex ID
+        q = Queue()
+        q.enqueue([starting_vertex])
+        # Create an empty Set to store visited vertices
+        visited = set()
+        # While the queue is not empty...
+        while q.size() > 0:
+            # Dequeue the first vertex
+            v = q.dequeue()
+            # If that vertex has not been visited...
+            if v is not None:
+                if v[-1] not in visited:
+                    # Mark it as visited
+                    if v[-1] == destination_vertex:
+                        return v
+                    visited.add(v[-1])
+                    # Then add all of its neighbors to the back of the queue
+                    for neighbor in self.vertices[v[-1]]["exits"].values():
+                        z = v[:]
+                        z.append(neighbor)
+                        q.enqueue(z)
+        return None
 
     def adventure_solution(self, starting_vertex):
         """
