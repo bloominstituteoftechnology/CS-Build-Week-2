@@ -19,27 +19,27 @@ def init():
         return False
     with open('current_state.txt', 'w') as f:
         f.write(json.dumps(data, indent=4))
-    print(data)
+    # print(data)
     return data
 
 
 def move(payload):
     r_move = requests.post(f'{url}/adv/move', data=json.dumps(payload), headers=headers)
     data = r_move.json()
-    print(type(data))
-    print(data)
+    # print(type(data))
+    # print(data)
     if 'errors' in data and len(data['errors']) > 0:
         print(data)
         return False
     with open('current_state.txt', 'w') as f:
         f.write(json.dumps(data, indent=4))
     current_state = get_contents()
-    # print('current_state', current_state)
+    # print(f'current_state, {current_state}\n')
 
     if str(data['coordinates']) not in current_state.keys():
         current_state[data['coordinates']] = data
         save_content(current_state)
-        # print(data)
+        print(data)
     return data
 
 def sleep_print(seconds):
@@ -55,7 +55,7 @@ def save_content(data):
 def get_contents():
     map_file = open('map.txt', 'rb').read()
     contents = json.loads(map_file)
-    print(f'Visited rooms: {len(contents)}')
+    # print(f'Visited rooms: {len(contents)}')
     return contents
 
 def get_item(item):
@@ -77,43 +77,20 @@ def status():
     print(data)
     return data
 
-
-previous_room = [None]
-opposites_direction = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'}
-
-room_track = {}
-visited = {}
+ccurrent_room = init()
 
 def travel():
-    current_room = init()
-    direction = 'w'
+    # current_room = init()
+    # cooldown = current_room['cooldown']
     while True:
         if current_room:
+            direction = 'w'
             cooldown = current_room['cooldown']
             exists = current_room['exits']
             print('Room ID: ', current_room['room_id'])
             print('ITEMS: ', current_room['items'])
             print('coor', current_room['coordinates'])
    
-            if direction not in exists:
-                # Random
-                direction = exists[randint(0, len(exists)-1)]
-            
-            # if len(exists) == 1:
-            #     # 's'
-            #     if 's' in exists:
-            #         direction = 's'
-
-
-            # # Priority East
-            # if 'e' in current_room['exits']:
-            #     direction = 'e'
-            # elif 'n' in current_room['exits']:
-            #     direction = 'n'
-            # elif 'w' in current_room['exits']:
-            #     direction = 'w'
-            # elif 's' in current_room['exits']:
-            #     direction = 's'
 
             print('EXITS', exists)
             print('DIRECTION', direction)
@@ -137,13 +114,14 @@ def travel():
 
 # init()
 
-move({'direction': "e"})
+# move({'direction': "w"})
 # change_name()
 # status()
 # get_item({'name': 'shiny treasure'})
 
-# get_contents()
-# travel()
+# print(len(get_contents()))
+travel()
+
 
 
 
