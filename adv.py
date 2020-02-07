@@ -26,11 +26,10 @@ def init():
 def move(payload):
     r_move = requests.post(f'{url}/adv/move', data=json.dumps(payload), headers=headers)
     data = r_move.json()
-    # print(type(data))
-    # print(data)
-    if 'errors' in data and len(data['errors']) > 0:
-        print(data)
-        return False
+
+    # if 'errors' in data and len(data['errors']) > 0:
+    #     print(data)
+    #     return False
     with open('current_state.txt', 'w') as f:
         f.write(json.dumps(data, indent=4))
     current_state = get_contents()
@@ -71,7 +70,7 @@ def drop_item(item):
     return data
 
 def change_name():
-    name = {"name":"[ANN]"}
+    name = {"name":"[ANN]", 'confirm':'aye'}
     r = requests.post(f'{url}/adv/change_name', data=json.dumps(name), headers=headers)
     data = r.json()
     print(data)
@@ -114,12 +113,10 @@ def travel():
         return direction
 
     while len(visited) < len(get_contents()):
-        # print('traversal_path', traversal_path)
-        # print(f'\n{current_room}\n')
         cooldown = current_room['cooldown']
         print('----cooldown---', cooldown)
         room_id = current_room['room_id']
-        print(f'\ncontenst----: {len(get_contents())}\n')
+        print(f'\nmap----: {len(get_contents())}\n')
         sleep_print(cooldown)
         if room_id not in room_track:
             visited[room_id] = room_id
@@ -139,17 +136,13 @@ def travel():
             print('room_track[room_id]:  ', len(room_track[room_id]))
             print('exits if', current_room['exits'][0])
             print(room_track[room_id])
-            # if len(room_track[room_id]) > 0:
             next_direction = room_track[room_id].pop(0)
             previous_room.append(opposites_direction[next_direction])
             traversal_path.append(next_direction)
             current_room = move({"direction": next_direction})
             print('next_direction',next_direction)
             sleep_print(cooldown+1)
-            # else:
-            #     print('do some thing')
-            #     direction = current_room['exits']
-            #     current_room = move({"direction": direction})
+            
 
             
 def travel_2():
@@ -164,13 +157,14 @@ def travel_2():
 
 
 # init()
-
-move({'direction': "n"})
-# sleep_print(30)
+# move({'direction': "s"})
+# move({'direction': "e", "next_room_id": "55"})
+# sleep_print(10)
 
 # change_name()
-# status()
+status()
 # get_item({'name': 'tiny treasure'})
+# drop_item({'name': 'shiny treasure'})
 # sleep_print(8)
 # print(f'visited :{len(get_contents())} rooms')
 # travel()
@@ -178,6 +172,7 @@ move({'direction': "n"})
 
 # wear({"name":"[tiny treasure]"})
 
+# curl -X POST -H 'Authorization: Token acd50be286c9bd90d6f6b57922a3493725f26c28' -H "Content-Type: application/json" -d '{"name":"[ANN]"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/
 
 
 

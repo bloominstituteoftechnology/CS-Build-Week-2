@@ -7459,5 +7459,121 @@
             "You have walked east.",
             "Heavily Encumbered: +100% CD"
         ]
+    },
+    "(69,56)": {
+        "room_id": 360,
+        "title": "A misty room",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(69,56)",
+        "elevation": 0,
+        "terrain": "NORMAL",
+        "players": [],
+        "items": [
+            "small treasure",
+            "tiny treasure",
+            "tiny treasure"
+        ],
+        "exits": [
+            "n",
+            "e"
+        ],
+        "cooldown": 30.0,
+        "errors": [],
+        "messages": [
+            "You have walked south.",
+            "Heavily Encumbered: +100% CD"
+        ]
+    },
+    "(70,56)": {
+        "room_id": 398,
+        "title": "A misty room",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(70,56)",
+        "elevation": 0,
+        "terrain": "NORMAL",
+        "players": [],
+        "items": [
+            "great treasure",
+            "shiny treasure"
+        ],
+        "exits": [
+            "e",
+            "w"
+        ],
+        "cooldown": 30.0,
+        "errors": [],
+        "messages": [
+            "You have walked east.",
+            "Heavily Encumbered: +100% CD"
+        ]
+    },
+    "(71,56)": {
+        "room_id": 438,
+        "title": "A misty room",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(71,56)",
+        "elevation": 0,
+        "terrain": "NORMAL",
+        "players": [],
+        "items": [
+            "great treasure",
+            "small treasure"
+        ],
+        "exits": [
+            "e",
+            "w"
+        ],
+        "cooldown": 30.0,
+        "errors": [],
+        "messages": [
+            "You have walked east.",
+            "Heavily Encumbered: +100% CD"
+        ]
+    },
+    "(72,56)": {
+        "room_id": 465,
+        "title": "A misty room",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(72,56)",
+        "elevation": 0,
+        "terrain": "NORMAL",
+        "players": [],
+        "items": [
+            "shiny treasure",
+            "tiny treasure",
+            "small treasure"
+        ],
+        "exits": [
+            "e",
+            "w"
+        ],
+        "cooldown": 30.0,
+        "errors": [],
+        "messages": [
+            "You have walked east.",
+            "Heavily Encumbered: +100% CD"
+        ]
+    },
+    "(73,56)": {
+        "room_id": 498,
+        "title": "A misty room",
+        "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
+        "coordinates": "(73,56)",
+        "elevation": 0,
+        "terrain": "NORMAL",
+        "players": [],
+        "items": [
+            "small treasure",
+            "small treasure"
+        ],
+        "exits": [
+            "w"
+        ],
+        "cooldown": 30.0,
+        "errors": [],
+        "messages": [
+            "You have walked east.",
+            "Heavily Encumbered: +100% CD"
+        ]
     }
 }

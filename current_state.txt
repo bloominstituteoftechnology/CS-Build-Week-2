@@ -1,20 +1,24 @@
 {
-    "room_id": 209,
-    "title": "A misty room",
-    "description": "You are standing on grass and surrounded by a dense mist. You can barely make out the exits in any direction.",
-    "coordinates": "(67,58)",
+    "room_id": 55,
+    "title": "Wishing Well",
+    "description": "You are standing besides a large well. A sign next the well reads 'EXAMINE WELL, FIND WEALTH'.",
+    "coordinates": "(63,61)",
     "elevation": 0,
     "terrain": "NORMAL",
-    "players": [],
+    "players": [
+        "[matthew_harshman]",
+        "Andy",
+        "Sean Wu",
+        "Kathryn",
+        "['Matt']"
+    ],
     "items": [],
     "exits": [
-        "s"
+        "w"
     ],
-    "cooldown": 15.0,
-    "errors": [],
-    "messages": [
-        "You have walked north.",
-        "Heavily Encumbered: +100% CD",
-        "Wise Explorer: -50% CD"
-    ]
+    "cooldown": 20.0,
+    "errors": [
+        "You cannot move that way: +5s CD"
+    ],
+    "messages": []
 }
