@@ -1,0 +1,21 @@
+{
+    "room_id": 1,
+    "title": "Shop",
+    "description": "You are standing in a small shop. A sign behind the mechanical shopkeeper says 'WILL PAY FOR TREASURE'.",
+    "coordinates": "(59,60)",
+    "elevation": 0,
+    "terrain": "NORMAL",
+    "players": [
+        "User 20484"
+    ],
+    "items": [],
+    "exits": [
+        "e"
+    ],
+    "cooldown": 30.0,
+    "errors": [],
+    "messages": [
+        "You have walked west.",
+        "Heavily Encumbered: +100% CD"
+    ]
+}

@@ -3,7 +3,7 @@ import requests
 import json
 from api_key import API_KEY
 import time
-from random import randint
+from random import randint, choice
 
 url = 'https://lambda-treasure-hunt.herokuapp.com/api'
 
@@ -19,7 +19,7 @@ def init():
         return False
     with open('current_state.txt', 'w') as f:
         f.write(json.dumps(data, indent=4))
-    # print(data)
+    print(data)
     return data
 
 
@@ -39,12 +39,12 @@ def move(payload):
     if str(data['coordinates']) not in current_state.keys():
         current_state[data['coordinates']] = data
         save_content(current_state)
-        print(data)
+    print(data)
     return data
 
 def sleep_print(seconds):
     while seconds > 0:
-        print('Cooling. Ready in ', seconds, ' seconds!')
+        print('Wait', seconds, ' seconds!')
         time.sleep(1)
         seconds = seconds - 1
 
@@ -64,6 +64,12 @@ def get_item(item):
     print(data)
     return data
 
+def drop_item(item):
+    r = requests.post(f'{url}/adv/drop', data=json.dumps(item), headers=headers)
+    data = r.json()
+    print(data)
+    return data
+
 def change_name():
     name = {"name":"[ANN]"}
     r = requests.post(f'{url}/adv/change_name', data=json.dumps(name), headers=headers)
@@ -77,51 +83,100 @@ def status():
     print(data)
     return data
 
-ccurrent_room = init()
+def wear(item):
+    r = requests.post(f'{url}/adv/wear', data=json.dumps(item), headers=headers)
+    data = r.json()
+    print(data)
+    return data
+
+
+
+traversal_path = []
+previous_room = [None]
+opposites_direction = {'n': 's', 'e': 'w', 's': 'n', 'w': 'e'}
+
+room_track = {}
+visited = {}
 
 def travel():
-    # current_room = init()
-    # cooldown = current_room['cooldown']
-    while True:
-        if current_room:
-            direction = 'w'
-            cooldown = current_room['cooldown']
-            exists = current_room['exits']
-            print('Room ID: ', current_room['room_id'])
-            print('ITEMS: ', current_room['items'])
-            print('coor', current_room['coordinates'])
-   
+    current_room = init()
+    sleep_print(1)
+    def check_directions(room_id):
+        direction = []
+        if 'e' in current_room['exits']:
+            direction.append('e')
+        if 'n' in current_room['exits']:
+            direction.append('n')
+        if 'w' in current_room['exits']:
+            direction.append('w')
+        if 's' in current_room['exits']:
+            direction.append('s')
+        return direction
 
-            print('EXITS', exists)
-            print('DIRECTION', direction)
-
-            item = current_room['items']
-            if len(item) > 0:
-                print('We found item!!')
-                get_item({'name': item[0]})
-
-            if current_room['room_id'] == 0:
-                print('sell something')
-                break
-
-            sleep_print(cooldown+1)
-            current_room = move({"direction": direction})
+    while len(visited) < len(get_contents()):
+        # print('traversal_path', traversal_path)
+        # print(f'\n{current_room}\n')
+        cooldown = current_room['cooldown']
+        print('----cooldown---', cooldown)
+        room_id = current_room['room_id']
+        print(f'\ncontenst----: {len(get_contents())}\n')
+        sleep_print(cooldown)
+        if room_id not in room_track:
+            visited[room_id] = room_id
+            print('visited room ', len(visited))
+            room_track[room_id] = check_directions(room_id)
+    
+        if len(room_track[room_id]) < 1:
+            print('room track-----if ', len(room_track))
+            previous_direction = previous_room.pop()
+            traversal_path.append(previous_direction)
+            current_room = move({"direction": previous_direction})
+            print('move pre')
+            # print('coor', current_room['coordinates'])
+            sleep_print(cooldown)
         else:
-            print(direction)
-            sleep_print(15)
+            print('room track-----else', len(room_track))
+            print('room_track[room_id]:  ', len(room_track[room_id]))
+            print('exits if', current_room['exits'][0])
+            print(room_track[room_id])
+            # if len(room_track[room_id]) > 0:
+            next_direction = room_track[room_id].pop(0)
+            previous_room.append(opposites_direction[next_direction])
+            traversal_path.append(next_direction)
+            current_room = move({"direction": next_direction})
+            print('next_direction',next_direction)
+            sleep_print(cooldown+1)
+            # else:
+            #     print('do some thing')
+            #     direction = current_room['exits']
+            #     current_room = move({"direction": direction})
 
             
+def travel_2():
+    while True:
+        current_room = move({"direction":'e'})
+        if len(current_room['errors']) > 0:
+            current_room = move({"direction":'w'})
+            
+
+
+
+
 
 # init()
 
-# move({'direction': "w"})
+move({'direction': "n"})
+# sleep_print(30)
+
 # change_name()
 # status()
-# get_item({'name': 'shiny treasure'})
+# get_item({'name': 'tiny treasure'})
+# sleep_print(8)
+# print(f'visited :{len(get_contents())} rooms')
+# travel()
+# travel_2()
 
-# print(len(get_contents()))
-travel()
-
+# wear({"name":"[tiny treasure]"})
 
 
 
