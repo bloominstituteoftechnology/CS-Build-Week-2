@@ -1,0 +1,1 @@
+web: gunicorn treasure_hunt.wsgi:application --log-file -
