@@ -8,6 +8,7 @@ autopep8 = "*"
 
 [packages]
 django = "*"
+python-decouple = "*"
 
 [requires]
 python_version = "3.8"
