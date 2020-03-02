@@ -66,7 +66,7 @@ Make sure the authorization is set up correctly in the axios call, e.g.:
 
 ```js
 post("URL", foo, {
-   headers: { Authorization: "Bearer " + token }
+   headers: { Authorization: "Token " + token }
 })
 ```
 
