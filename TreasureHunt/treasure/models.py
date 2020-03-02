@@ -4,9 +4,9 @@ from django.db import models
 
 
 class MapRoom:
-    def __init__(self, room, neighbors):
+    def __init__(self, room):
         self.room_id = room.room_id
         self.title = room.title
         self.description = room.description
         self.coordinates = room.coordinates
-        self.neighbors = neighbors
+        self.neighbors = None

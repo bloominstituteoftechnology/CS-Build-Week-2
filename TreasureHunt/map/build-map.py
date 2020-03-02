@@ -1,6 +1,7 @@
 import random
 from structures import Queue, Stack
 from treasure.models import MapRoom
+from functions import move_player, init_player
 
 # view_stack = []
 # view_queue = []
@@ -55,7 +56,7 @@ class Graph:
         # # print('initial view stack', view_stack)
         random_dir = None
         prev_room = None
-        while len(self.rooms) <= len(room_graph):
+        while len(self.rooms) <= 500:
             curr_room = stack.pop()
             # view_stack.pop()
             # # print('view stack after pop', view_stack)
@@ -114,7 +115,7 @@ class Graph:
         # view_queue.append([(first_room.id, "")])
         # print('initial view_queue', view_queue)
         visited_set = set()
-        while queue.size() > 0 and len(self.rooms) < len(room_graph):
+        while queue.size() > 0 and len(self.rooms) < 500:
             new_path = queue.dequeue()
             # view_queue.pop(0)
             # print('view_queue after dequeue', view_queue)
