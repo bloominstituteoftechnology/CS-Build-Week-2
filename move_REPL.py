@@ -50,3 +50,6 @@ while moving:
     #curl -X POST -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
     #curl -X POST -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' -H "Content-Type: application/json" -d '{"name":"tiny treasure", "confirm":"yes"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/sell/
     #curl -X POST -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' -H "Content-Type: application/json" -d '{"name":"tiny treasure"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/drop/
+    #curl -X POST -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' -H "Content-Type: application/json" -d '{"name":"Wishing Well"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/
+    #curl -X GET -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' https://lambda-treasure-hunt.herokuapp.com/api/bc/last_proof/
+    #curl -X POST -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' -H "Content-Type: application/json" -d '{"proof":16663616}' https://lambda-treasure-hunt.herokuapp.com/api/bc/mine/

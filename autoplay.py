@@ -6,6 +6,7 @@ import math
 import random
 import pickle
 import hashlib
+from cpu import CPU
 
 class Queue():
     def __init__(self):
@@ -145,6 +146,44 @@ def valid_proof(last_proof, proof, difficulty):
         return True
     return False
 
+def wish():
+    data = '{"name":"Wishing Well"}'
+    response = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/', headers=headers, data=data).json()
+    
+    code = response['description'].split('\n')
+    filename = 'wishing_well.txt'
+    with open(filename, 'w') as f:
+        for line in code[2:]:
+            f.write(line)
+            f.write('\n')
+
+    ls8 = CPU()
+    ls8.load(filename)
+    next_room = ls8.run()
+
+    print(f'\nMine found: {next_room}')
+    return next_room
+
+def status():
+    return requests.get('https://lambda-treasure-hunt.herokuapp.com/api/adv/init/', headers=headers).json()
+
+
+def keep_on_mining():
+    while True:
+        current_status = requests.get('https://lambda-treasure-hunt.herokuapp.com/api/adv/init/', headers=headers).json()
+        location = current_status['room_id']
+
+        if location != 55:
+            path = generate_path(55, current_room, graph_reverse)
+            travel_path(path)
+            
+        mine_room = wish()
+        path = generate_path(mine_room, location, graph_reverse)
+        travel_path(path)
+
+        message = proof_of_work()
+        print(message)
+
 # Use load() to read in pickled files
 graph, room_list = load()
 
@@ -171,10 +210,13 @@ wait(cooldown)
 
 headers['Content-Type'] = 'application/json'
 
-#Generate a path
+# Travel to a particular room
 # path = generate_path(221, current_room, graph_reverse)
 # travel_path(path)
 
-while True:
-    message = proof_of_work()
-    print(message)
+
+# message = proof_of_work()
+# print(message)
+# path = generate_path(55, current_room, graph_reverse)
+# travel_path(path)
+keep_on_mining()
