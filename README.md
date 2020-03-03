@@ -185,6 +185,20 @@ Confirm the sale with the following command:
 curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"treasure", "confirm":"yes"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/sell/
 `
 
+## Buy
+
+You may find a shop that sells goods as well. You can buy with the following command:
+
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"donut"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/buy/
+`
+
+This will also ask for confirmation before completing the transaction:
+`
+curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"donut", "confirm":"yes"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/buy/
+`
+
+
 ## Status, Inventory
 
 You can check your status and inventory using the following command:
