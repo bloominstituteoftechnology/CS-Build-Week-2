@@ -10,6 +10,8 @@ import copy
 import time
 import math
 import json
+from ls8 import ls8
+from mine import valid_proof, proof_of_work
 
 path_reverse = {}
 for i in path:
@@ -87,7 +89,7 @@ print(f'Name: {name}')
 
 
 Initial_name = 'User 20677'
-shrined = [0,0,0]
+shrined = [1,1,1]
 # Go to shop function
 def go_to_shop(curr_id, inventory, shop=1, come_back=False):
     """
@@ -163,7 +165,8 @@ def go_to_pirate(curr_id, pyrate=467, come_back=False):
     
     data_name = '{"name":"[MALI-BOT]", "confirm":"aye"}'
 
-    response_name = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/', headers=headers, data=data_name).json()
+    response_name = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/', 
+                                  headers=headers, data=data_name).json()
     print(response_name['messages'])
     
 
@@ -181,9 +184,7 @@ def go_to_shrine(curr_id, shrine=[374,461,22]):
         print(shrined)
         if shrined[ind] == 0:
             sh = shrine[ind]
-
-
-    
+            
     traversal_path = g.bfs(curr_id, sh)
     
     i = 0
@@ -206,6 +207,48 @@ def go_to_shrine(curr_id, shrine=[374,461,22]):
     print(response_shrine)
     # curr_id = next_room['room_id']
     # return curr_id
+import itertools
+def go_to_wishing_well_mine(curr_id, wishing_well=55):
+    traversal_path = g.bfs(curr_id, pyrate)
+    i = 0
+    ids = []
+    directions = []
+    while i + 1 < len(traversal_path):
+        print(traversal_path[i])
+        direction = path_reverse[traversal_path[i]][traversal_path[i+1]]
+        directions.append(direction)
+        ids.append(traversal_path[i+1])
+    listy = [list(v) for g,v in itertools.groupby(directions)]
+    temp_length = 0
+    counter = 0
+    for i in range(len(listy)):
+        length = len(listy[i])
+        temp_length += length
+        print(ids[counter:temp_length])
+        ids_str = str(ids[counter:temp_length]).strip('[]')
+        print(ids_str)
+        dir = listy[i][0]
+        
+        counter = temp_length
+        if length > 1:
+            dash_data = '{"direction":"'+ dir +'", "num_rooms":"' + str(length) + '", "next_room_ids":"' + ids_str + '"}'
+            requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/dash/', 
+                          headers=headers, data=dash_data).json()
+            cooldown_func(next_room)
+        else:
+            fly_data = '{"direction":"' + direction + '", "next_room_id":"' + ids_str + '"}'
+            next_room = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/fly/', 
+                                headers=headers, data=fly_data).json()
+            cooldown_func(next_room)
+        
+    # name_of_well = next_room['Wishing Well']
+    data_items = '{"name":"Wishing Well"}'
+    response_examin = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/', 
+                                                    headers=headers, data=data_items).json()
+    well_desc = response_examin['description']
+    print(f'well_desc: {well_desc}')
+    # if int(well_desc[-3],
+           
     
     
 
@@ -215,7 +258,8 @@ def go_to_shrine(curr_id, shrine=[374,461,22]):
 def find_new_move_room(visited, current_room, curr_id, encumbrance, 
                        strength, inventory, gold, armor, shoes, name, abilities):
     sold = False
-    if (strength - encumbrance) <= 2 | (encumbrance == strength) | ((gold == 900) & (encumbrance == 3)):
+    # Go to shop
+    if (strength - encumbrance) <= 1 | (encumbrance == strength):
         print('=========Going to the shop===========\n')
         
         sold = go_to_shop(curr_id, inventory, shop=1, come_back=False)
@@ -223,13 +267,18 @@ def find_new_move_room(visited, current_room, curr_id, encumbrance,
             curr_id, encumbrance, strength, inventory, gold, armor, shoes, name = response_func()
             
     print(f'Encumbrance and stength: {encumbrance}, {strength}')
-    if (gold >= 1000) & (name == '[Stephen-Sinclair-BOT]'):
+    # Change Name
+    if (gold >= 1000) & (name == 'SOME NAME'):
         print('=========Going to the see pirate Ry===========\n')
         go_to_pirate(curr_id)
-    
+    # Pray
     if ('pray' in abilities) & (shrined != [1,1,1]):
         print('==============Going to Pray================')
         go_to_shrine(curr_id)
+    # Wishing Well
+    if len(abilities) == 5:
+        code = go_to_wishing_well_mine(curr_id)
+        
         
         
             
@@ -381,7 +430,6 @@ while moving:
         traversal_path.append(next_move)
         print(f"Going {next_move} towards {next_room_id}\n")
         visited[curr_id][next_move] = next_room_id
-        # room_info[curr_id] = curr_room
         room_info[curr_id]['exit_id'] = visited[curr_id]
         if next_room_id not in visited:
             visited[next_room_id] = {}
@@ -396,8 +444,8 @@ while moving:
         curr_id = next_room_id
     print("======================== Moved to new room =========================")
     print(f'Total rooms visited: {len(visited)}')
-    # print(f'room_info: {room_info}')
 
+    # Save map info
     f = open("visited.txt","w")
     f.write(str(visited))
     f.close()
@@ -405,13 +453,3 @@ while moving:
     f = open("room_info.txt","w")
     f.write(str(room_info))
     f.close()
-
-    # json = json.dumps(visited)
-    # f = open("visited.json","w")
-    # f.write(json)
-    # f.close()
-
-    # json = json.dumps(room_info)
-    # f = open("room_info.json","w")
-    # f.write(json)
-    # f.close()
