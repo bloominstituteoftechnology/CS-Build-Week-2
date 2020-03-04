@@ -59,18 +59,7 @@ if __name__ == '__main__':
 
     coins_mined = 0
 
-    # Load or create ID
-    # f = open("my_id.txt", "r")
-    # id = f.read()
-    # print("ID is", id)
-    # f.close()
-
-    # if id == 'NONAME\n':
-    #     print("ERROR: You must change your name in `my_id.txt`!")
-    #     exit()
-    # Run forever until interrupted
     while True:
-        # Get the last proof from the server
         r = requests.get(url=node + "/last_proof", headers=headers)
         last_data = r.json()
         new_proof = proof_of_work(last_data['proof'], last_data['difficulty'])
@@ -83,9 +72,3 @@ if __name__ == '__main__':
         data = r.json()
         print(data)
         time.sleep(data["cooldown"])
-        # print(data['message'])
-        # if data['message'] == 'New Block Forged':
-        #     coins_mined += 1
-        #     print("Total coins mined: " + str(coins_mined))
-        # else:
-        #     print(data['message'])

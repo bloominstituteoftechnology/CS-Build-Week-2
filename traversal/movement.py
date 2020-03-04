@@ -7,21 +7,6 @@ from decouple import config
 from visited_rooms import visited_rooms
 
 
-# Import visited_rooms for wise movement
-# Traversal that uses DFS, to find path
-# Store is at room id 1
-mine = 72
-store = 1
-# Name Changer is at 467
-name_change = 467
-# Well is at 55
-well = 55
-# Shrines is at 461, 374
-shrine1 = 461
-shrine2 = 374
-# Mine location (decoded coordinates as room id)
-# Add power abilites (STRETCH)
-
 node = "https://lambda-treasure-hunt.herokuapp.com/api"
 headers = {"Authorization": config('API_KEY')}
 player_data = requests.post(url=node + "/adv/status", headers=headers)
@@ -29,13 +14,9 @@ player = player_data.json()
 
 
 def wise_map(visited_rooms):
-    # Get the current room information
     r = requests.get(url=node + "/adv/init", headers=headers)
     curr = r.json()
     print(curr)
-    # Pass in the direction being moved
-    # Grab the room_id of room going into
-    # Run moving function
 
 
 def sell(player):
@@ -43,7 +24,6 @@ def sell(player):
         data = {"name": "treasure"}
         r = requests.post(url=node + "/adv/sell",
                           json=data, headers=headers)
-        # Handle non-json response
         print("data", data)
         try:
             print("cooldown", r.json()["cooldown"])
@@ -73,12 +53,10 @@ def sell(player):
 def moving_function(traversal_path, rooms_id_list=None):
     print(traversal_path, rooms_id_list)
     for i in range(len(traversal_path)):
-        # data = {"direction": i, "next_room_id": str(room_id)}
         data = {"direction": traversal_path[i],
                 "next_room_id": str(rooms_id_list[i])}
         r = requests.post(url=node + "/adv/move",
                           json=data, headers=headers)
-        # Handle non-json response
         print("data", data)
         try:
             print("cooldown", r.json()["cooldown"])
@@ -129,6 +107,13 @@ def room_search(visited_rooms, starting_room, target):
             else:
                 pass
 
+
+mine = 72
+store = 1
+name_change = 467
+well = 55
+shrine1 = 461
+shrine2 = 374
 
 # wise_map(visited_rooms)
 # sell(player)
