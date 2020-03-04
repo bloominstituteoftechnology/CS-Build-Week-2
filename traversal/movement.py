@@ -10,6 +10,7 @@ from visited_rooms import visited_rooms
 # Import visited_rooms for wise movement
 # Traversal that uses DFS, to find path
 # Store is at room id 1
+mine = 72
 store = 1
 # Name Changer is at 467
 name_change = 467
@@ -20,8 +21,6 @@ shrine1 = 461
 shrine2 = 374
 # Mine location (decoded coordinates as room id)
 # Add power abilites (STRETCH)
-# End
-end = 499
 
 node = "https://lambda-treasure-hunt.herokuapp.com/api"
 headers = {"Authorization": config('API_KEY')}
@@ -131,7 +130,7 @@ def room_search(visited_rooms, starting_room, target):
                 pass
 
 
-wise_map(visited_rooms)
+# wise_map(visited_rooms)
 # sell(player)
-moving_function(traversal_path, rooms_id_list=None)
-# room_search(visited_rooms, starting_room, name_change)
+# moving_function(traversal_path, rooms_id_list=None)
+room_search(visited_rooms, starting_room, mine)
