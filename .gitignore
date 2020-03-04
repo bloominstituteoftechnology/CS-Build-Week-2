@@ -1,3 +1,4 @@
 .env
 /.vscode
 Pipfile.lock
+.notes
