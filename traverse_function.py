@@ -224,7 +224,7 @@ if __name__ == '__main__':
                         new_path = path.copy()
                         new_path.append("w")
                         paths.append(new_path)
-                        queue.append(visited[room_id]["w"])
+                        queue.append(visited_rooms[room_id]["w"])
                     if "e" in visited_rooms[room_id]:
                         new_path = path.copy()
                         new_path.append("e")
