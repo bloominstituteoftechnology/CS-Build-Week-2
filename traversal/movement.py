@@ -20,21 +20,23 @@ shrine1 = 461
 shrine2 = 374
 # Mine location (decoded coordinates as room id)
 # Add power abilites (STRETCH)
+# End
+end = 499
 
 node = "https://lambda-treasure-hunt.herokuapp.com/api"
 headers = {"Authorization": config('API_KEY')}
-
-# def wise_map(visited):
-#     # Get the current room information
-#     r = requests.get(url=node + "/adv/init", headers=headers)
-#     curr = r.json()
-#     print(curr)
-#     # Pass in the direction being moved
-#     # Grab the room_id of room going into
-#     # Run moving function
-
 player_data = requests.post(url=node + "/adv/status", headers=headers)
 player = player_data.json()
+
+
+def wise_map(visited_rooms):
+    # Get the current room information
+    r = requests.get(url=node + "/adv/init", headers=headers)
+    curr = r.json()
+    print(curr)
+    # Pass in the direction being moved
+    # Grab the room_id of room going into
+    # Run moving function
 
 
 def sell(player):
@@ -129,4 +131,7 @@ def room_search(visited_rooms, starting_room, target):
                 pass
 
 
-room_search(visited_rooms, starting_room, name_change)
+wise_map(visited_rooms)
+# sell(player)
+moving_function(traversal_path, rooms_id_list=None)
+# room_search(visited_rooms, starting_room, name_change)
