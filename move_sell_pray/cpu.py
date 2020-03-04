@@ -54,6 +54,7 @@ class CPU:
         self.reg[self.SP] = 0xF4
         self.pc = 0
         self.fl = 0b00000000
+        self.mine_room = []
         
         # Instructions:
         for i in self.OPCODES:
@@ -90,11 +91,21 @@ class CPU:
         #     0b00000000,
         #     0b00000001, # HLT
         # ]
+        
+        path = program
+        address = 0
+        with open(path) as f:
+            for line in f:
+                # skip empty lines and comments
+                if line[0].isnumeric()==False:
+                    continue
+                self.ram[address] = int(line[0:8], 2)
+                address += 1 
 
-        for instruction in program:
+        # for instruction in program:
             
-            self.ram[address] = instruction
-            address += 1
+        #     self.ram[address] = instruction
+        #     address += 1
 
 
     def alu(self, op, reg_a, reg_b):
@@ -126,6 +137,14 @@ class CPU:
             self.reg[reg_a] = a_value ^ b_value
         else:
             raise Exception("Unsupported ALU operation")
+    
+    def pra(self, reg_address):
+        # print(self.reg[reg_address])
+        # print(self.reg[reg_address][-3:])
+        # return 
+        self.mine_room.append(chr(self.reg[reg_address]))
+        print(self.mine_room)
+        # print(chr(self.reg[reg_address]))
 
     def trace(self):
         """
@@ -156,24 +175,24 @@ class CPU:
     def run(self):
         """Run the CPU."""
         
-        # ir = [0] * 8
+        ir = [0] * 8
         math_op = [self.ADD, self.SUB, self.MUL,
                    self.DIV, self.CMP, self.AND, 
                    self.OR, self.XOR]
-        commands = []
+        # commands = []
         
-        with open(sys.argv[1], "r") as f:
-            line = f.readlines()
-            # print(line)
-        for i in line:
-            if i[0] == "#":
-                continue
-            else:
-                commands.append(int(i[:8],2))
-        f.close()
+        # with open(sys.argv[1], "r") as f:
+        #     line = f.readlines()
+        #     # print(line)
+        # for i in line:
+        #     if i[0] == "#":
+        #         continue
+        #     else:
+        #         commands.append(int(i[:8],2))
+        # f.close()
         
-        self.load(commands)
-        print(commands)
+        # self.load(commands)
+        # print(commands)
         while True:
             command = self.ram[self.pc]
             if command in math_op:
@@ -257,6 +276,17 @@ class CPU:
                 self.reg[address_in_a] = b_value
                 
                 self.pc += 3
+                
+            elif command == self.PRA:
+                reg_a = self.ram_read(self.pc + 1)
+                self.pra(reg_a)
+                
+                self.pc += 2
+            
+            elif command == self.IRET:
+                self.mine_room = ''.join(self.mine_room)
+                print(self.mine_room)
+                return self.mine_room
             
             elif command == self.HLT:
                 sys.exit(0)
