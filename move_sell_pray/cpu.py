@@ -54,7 +54,7 @@ class CPU:
         self.reg[self.SP] = 0xF4
         self.pc = 0
         self.fl = 0b00000000
-        self.mine_room = []
+        self.mine_room = ''
         
         # Instructions:
         for i in self.OPCODES:
@@ -142,8 +142,11 @@ class CPU:
         # print(self.reg[reg_address])
         # print(self.reg[reg_address][-3:])
         # return 
-        self.mine_room.append(chr(self.reg[reg_address]))
-        print(self.mine_room)
+        output = chr(self.reg[reg_address])
+        if output.isnumeric():
+            self.mine_room = self.mine_room + output
+        # self.mine_room.append(chr(self.reg[reg_address]))
+        # print(self.mine_room)
         # print(chr(self.reg[reg_address]))
 
     def trace(self):
