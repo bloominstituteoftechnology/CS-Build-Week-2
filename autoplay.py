@@ -214,9 +214,27 @@ headers['Content-Type'] = 'application/json'
 # path = generate_path(221, current_room, graph_reverse)
 # travel_path(path)
 
+# while True:
+#     # need to change current room 
+#     response = requests.get(url + '/api/adv/init/', headers=headers).json()
+#     current_room = response['room_id']
+#     path = generate_path(55, current_room, graph_reverse)
+#     travel_path(path)
+#     mine_room = int(wish())
+#     path = generate_path(mine_room, current_room, graph_reverse)
+#     travel_path(path)
+#     message = proof_of_work()
+#     print(message)
+
+# path = generate_path(42, current_room, graph_reverse)
+# travel_path(path)
+
+# resp = proof_of_work()
+# print(resp)
+# wish()
+
+path = generate_path(495, current_room, graph_reverse)
+travel_path(path)
 
 # message = proof_of_work()
 # print(message)
-# path = generate_path(55, current_room, graph_reverse)
-# travel_path(path)
-keep_on_mining()
