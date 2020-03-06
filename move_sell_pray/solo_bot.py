@@ -35,7 +35,7 @@ def cooldown_func(response):
         time.sleep(1)
 
 # curl -X POST -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
-token = 'Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' #6a879ef0d8d6851f96f1d1144cd3836007c07225 474a89c17aebf1820255565c58db9f9b2e2893f1
+token = 'Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' #6a879ef0d8d6851f96f1d1144cd3836007c07225 474a89c17aebf1820255565c58db9f9b2e2893f1
 url = 'https://lambda-treasure-hunt.herokuapp.com'
 headers = {
     'Authorization': token,
@@ -280,7 +280,7 @@ def dash_fly(curr_id,destination):
             fly_data = '{"direction":"' + direction + '", "next_room_id":"' + ids_str + '"}'
             next_room = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/fly/', 
                                 headers=headers, data=fly_data).json()
-            print(f"room: {next_room['room_id']}")
+            # print(f"room: {next_room['room_id']}")
             cooldown_func(next_room)
         
     return destination
@@ -497,7 +497,7 @@ if curr_id > 500:
 else:
     wrapped = False
     
-force = 15 # <---------------- CHANGE to room
+force = 986 # <---------------- CHANGE to room
 def find_new_move_room(visited, current_room, curr_id, encumbrance, 
                        strength, inventory, gold, armor, shoes, name, 
                        abilities, has_mined, wrapped):
@@ -507,9 +507,13 @@ def find_new_move_room(visited, current_room, curr_id, encumbrance,
     # new_id = go_to_wishing_well_mine(curr_id) # <-------------------------- FROCE WISH AND MINE -------------------------
     # force go to:
     if force != False:
-        if (wrapped == True) & (has_mined == True):
+        if (force > 500) & (wrapped == False):
             curr_id = warp()
             wrapped = False
+        elif (force < 500) & (wrapped == True):
+            curr_id = warp()
+            wrapped = False
+            
         print(f'============= Forced to go to {force} =============')
         curr_id = force_go(curr_id, force)
     
