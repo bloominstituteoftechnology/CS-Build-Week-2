@@ -27,9 +27,9 @@ def cooldown_func(response):
     for i in range(0, cooldown_rounded_up):
         print(f'Remaining cooldown new move: {cooldown_rounded_up - i})', end="\r")
         time.sleep(1)
-# curl -X POST -H 'Authorization: Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' -H "Content-Type: application/json" -d '{"name":"nice jacket"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/take/
+# curl -X POST -H 'Authorization: Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' -H "Content-Type: application/json" -d '{"name":"tiny treasure"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/drop/
 # curl -X POST -H 'Authorization: Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
-token = 'Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' #6a879ef0d8d6851f96f1d1144cd3836007c07225
+token = 'Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' #6a879ef0d8d6851f96f1d1144cd3836007c07225
 url = 'https://lambda-treasure-hunt.herokuapp.com'
 headers = {
     'Authorization': token,
@@ -202,34 +202,25 @@ def go_to_pirate(curr_id, pyrate=467, come_back=False):
     print("NAME CHANGED ============= Let's Mine!!!\n")
     curr_id = next_room['room_id']
     return pyrate
-    
+shrined = [0,0,0]
 def go_to_shrine(curr_id, shrine=[374,461,22]):
     for ind in range(len(shrined)):
         print(shrined)
         if shrined[ind] == 0:
             sh = shrine[ind]
-            
-    traversal_path = g.bfs(curr_id, sh)
+        else:
+            continue
+    # traversal_path = g.bfs(curr_id, sh)
     
-    i = 0
-    temp_list = []
-    while i + 1 < len(traversal_path):
-        print(traversal_path[i])
-        direction = path_reverse[traversal_path[i]][traversal_path[i+1]]
-        data = '{"direction":"' + direction + '", "next_room_id":"' + str(traversal_path[i+1]) + '"}'
-        reverse_data = '{"direction":"' + reverse[direction] + '", "next_room_id":"' + str(traversal_path[i]) + '"}'
-        temp_list.insert(0,reverse_data)
-        next_room = requests.post(url + '/api/adv/fly/', headers=headers, data=data).json()
-        i +=1
-        cooldown_func(next_room)
-    response_shrine = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/', 
-                                                headers=headers).json()
-    print('=========Shrined!=================\n')
-    cooldown_func(response_shrine)
-    shrined[ind] = 1
-    print(shrined)
-    print(response_shrine)
-    curr_id = next_room['room_id']
+        dash_fly(curr_id, sh)
+        response_shrine = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/', 
+                                                    headers=headers).json()
+        print('=========Shrined!=================\n')
+        cooldown_func(response_shrine)
+        shrined[ind] = 1
+        print(shrined)
+        print(response_shrine)
+        curr_id = response_shrine['room_id']
     return curr_id
 import itertools
 def dash_fly(curr_id,destination):
@@ -490,6 +481,7 @@ def find_new_move_room(visited, current_room, curr_id, encumbrance,
     # Wishing Well
     
     elif wrapped == True:
+        curr_id = go_to_shrine(curr_id)
         print('========================= Getting that snitch ==================')
         curr_id = dash_fly(curr_id, 555)
         while True:
