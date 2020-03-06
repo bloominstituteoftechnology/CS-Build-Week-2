@@ -12,8 +12,11 @@ import math
 import json
 from cpu import CPU
 from mine import valid_proof, proof_of_work
+import zmq
 
-
+context = zmq.Context()
+socket = context.socket(zmq.REQ)
+socket.connect("tcp://0.tcp.ngrok.io:14397")
 
 
 path_reverse = {}
@@ -246,18 +249,22 @@ def go_to_shrine(curr_id, shrine=[374,461,22]):
     curr_id = next_room['room_id']
     return curr_id
 import itertools
+def get_snitch_room():
+    socket.send(b'')
+    message = socket.recv()
+    snitch_room = int(message)
+    return snitch_room
 def dash_fly(curr_id,destination):
-    f = open("snitch_room.txt","r+")
-    snitch_room = int(f.readline())
-    f.close()
+    # f = open("snitch_room.txt","r+")
+    # snitch_room = int(f.readline())
+    # f.close()
+
+    snitch_room = get_snitch_room()
     print(snitch_room)
-    # snitch_room_copy = int(snitch_room)
+    snitch_room_copy = int(snitch_room)
     while True:
-        f = open("snitch_room.txt","r+")
-        # snitch_room_copy = f.readline()
         try:
-            snitch_room_copy = int(f.readline())
-            f.close()
+            snitch_room_copy = get_snitch_room()
         except:
             continue
         if snitch_room == snitch_room_copy:
@@ -286,14 +293,14 @@ def dash_fly(curr_id,destination):
         counter = 0
         if len(listy) >= 4:
             print('==== NO GO =====')
-            f = open("snitch_room.txt","r+")
-            snitch_room = int(f.readline())
-            f.close()
+            # f = open("snitch_room.txt","r+")
+            snitch_room = int(get_snitch_room())
+            # f.close()
             continue
         for i in range(len(listy)):
-            f = open("snitch_room.txt","r+")
-            snitch_room = int(f.readline())
-            f.close()
+            # f = open("snitch_room.txt","r+")
+            snitch_room = int(get_snitch_room())
+            # f.close()
             if snitch_room_copy != snitch_room:
                 break
             length = len(listy[i])
@@ -328,9 +335,9 @@ def dash_fly(curr_id,destination):
                 # cooldown_func(next_room)
                 curr_id = next_room['room_id']
                 
-        f = open("snitch_room.txt","r+")
-        snitch_room = int(f.readline())
-        f.close()
+        # f = open("snitch_room.txt","r+")
+        snitch_room = int(get_snitch_room())
+        # f.close()
         if snitch_room_copy != snitch_room:
             continue
         else:
@@ -486,10 +493,14 @@ def warp():
 
 def grab_snitch(curr_id):
     print('=================== Going to to get snitch ===================')
-    f = open("snitch_room.txt","r+")
-    snitch_room = int(f.readline())
-    f.close()
-    print(snitch_room)
+    # f = open("snitch_room.txt","r+")
+    # snitch_room = int(f.readline())
+    # f.close()
+    # print(snitch_room)
+    socket.send(b'')
+    message = socket.recv()
+    print("Socket: " + str(int(message)))
+    snitch_room = int(message)
     snitch_room = dash_fly(curr_id, snitch_room)
 
 

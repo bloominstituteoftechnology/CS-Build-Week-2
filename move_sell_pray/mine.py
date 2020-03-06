@@ -1,11 +1,11 @@
 import requests
 import hashlib
 import json
-from time import time
+# from time import time
 from uuid import uuid4
 import math
 import random
-# import time
+import time
 
 def cooldown_func(response):
     cooldown = response["cooldown"]

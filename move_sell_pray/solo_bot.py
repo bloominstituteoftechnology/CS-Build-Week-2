@@ -35,7 +35,11 @@ def cooldown_func(response):
         time.sleep(1)
 
 # curl -X POST -H 'Authorization: Token 474a89c17aebf1820255565c58db9f9b2e2893f1' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
+<<<<<<< HEAD
 token = 'Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' #6a879ef0d8d6851f96f1d1144cd3836007c07225 474a89c17aebf1820255565c58db9f9b2e2893f1
+=======
+token = 'Token 474a89c17aebf1820255565c58db9f9b2e2893f1' #6a879ef0d8d6851f96f1d1144cd3836007c07225
+>>>>>>> 02f8fdb04ec09644be84d180ae36534e0ba3b751
 url = 'https://lambda-treasure-hunt.herokuapp.com'
 headers = {
     'Authorization': token,
@@ -461,7 +465,11 @@ def find_new_move_room(visited, current_room, curr_id, encumbrance,
     elif ((armor == True) | (shoes == True)) & (has_mined == True):
         curr_id = go_to_transmogrifier(curr_id)
         
+<<<<<<< HEAD
     elif (wrapped == True) & (has_mined == True):
+=======
+    elif (wrapped == False) & (has_mined == True):
+>>>>>>> 02f8fdb04ec09644be84d180ae36534e0ba3b751
         curr_id = warp()
         wrapped = False
         
