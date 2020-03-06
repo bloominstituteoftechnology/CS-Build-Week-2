@@ -34,12 +34,8 @@ def cooldown_func(response):
         print(f'Remaining cooldown new move: {cooldown_rounded_up - i})', end="\r")
         time.sleep(1)
 
-# curl -X POST -H 'Authorization: Token 474a89c17aebf1820255565c58db9f9b2e2893f1' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
-<<<<<<< HEAD
-token = 'Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' #6a879ef0d8d6851f96f1d1144cd3836007c07225 474a89c17aebf1820255565c58db9f9b2e2893f1
-=======
-token = 'Token 474a89c17aebf1820255565c58db9f9b2e2893f1' #6a879ef0d8d6851f96f1d1144cd3836007c07225
->>>>>>> 02f8fdb04ec09644be84d180ae36534e0ba3b751
+# curl -X POST -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
+token = 'Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' #6a879ef0d8d6851f96f1d1144cd3836007c07225 474a89c17aebf1820255565c58db9f9b2e2893f1
 url = 'https://lambda-treasure-hunt.herokuapp.com'
 headers = {
     'Authorization': token,
@@ -79,7 +75,9 @@ def unvisited(graph):
         if '?' in graph[i].values():
             return True
     return False
-
+response_status = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/status/', 
+                                            headers=headers).json()
+print(response_status)
 def response_func(what='status'):
     response_status = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/status/', 
                                             headers=headers).json()
@@ -388,6 +386,73 @@ def warp():
     print(response)
     return curr_id
     
+def force_go(curr_id, destination):
+    
+    
+    destination = dash_fly(curr_id, destination)
+    encumbrance, strength, inventory, gold, armor, shoes, name, abilities, has_mined = response_func()
+    
+    
+ 
+    while True:
+        print(inventory)
+        cmds = input("-> ").lower().split(" ")
+        if cmds[0] in ["examine", "wear", "undress","choose",'transmogrify', 'take', 'pray', 'buy']:
+            if cmds[0] == 'pray':
+                 pray_response = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/'+cmds[0]+'/', 
+                                    headers=headers).json()
+                 print(pray_response)
+            if cmds[0] == 'buy':
+                t = cmds[1]
+                if len(cmds[:]) > 2:
+                    t = cmds[1] + " " + cmds[2]
+                elif len(cmds[:]) > 3:
+                    t = cmds[1] + " " + cmds[2] + " " + cmds[3]
+                # {"name":"donut", "confirm":"yes"}
+                data = '{"name":"' + str(t) +'", "confirm":"yes"}'
+                take_examin = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/'+cmds[0]+'/', 
+                                        headers=headers, data=data).json()
+                cooldown_func(take_examin)
+            else:
+                t = cmds[1]
+                if len(cmds[:]) > 2:
+                    t = cmds[1] + " " + cmds[2]
+                elif len(cmds[:]) > 3:
+                    t = cmds[1] + " " + cmds[2] + " " + cmds[3]
+
+                data = '{"name":"' + str(t) +'"}'
+                
+                take_examin = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/'+cmds[0]+'/', 
+                                        headers=headers, data=data).json()
+                cooldown_func(take_examin)
+                print(take_examin)
+        elif cmds[0].isnumeric():
+            curr_room = destination
+            destination = int(cmds[0])
+            destination = force_go(curr_room, destination)
+        
+        elif cmds[0] == 'title':
+            t = ""
+            if len(cmds[1:]) > 1:
+                t = cmds[1] + " " + cmds[2]
+            elif len(cmds[1:]) > 2:
+                t = cmds[1] + " " + cmds[2] + " " + cmds[3]
+            elif len(cmds[1:]) > 3:
+                t = cmds[1] + " " + cmds[2] + " " + cmds[3]+ " " + cmds[4]
+
+            data = '{"title":"' + str(t) +'"}'
+            
+            take_examin = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/'+cmds[0]+'/', 
+                                    headers=headers, data=data).json()
+            cooldown_func(take_examin)
+            print(take_examin)
+            
+        elif cmds[0] == "q":
+            break
+
+    return destination
+    
+
 def go_to_wishing_well_snitch(curr_id, wishing_well=55, alternative=False):
     new_room_id = dash_fly(curr_id, wishing_well)
 
@@ -431,6 +496,8 @@ if curr_id > 500:
     wrapped = True
 else:
     wrapped = False
+    
+force = 15 # <---------------- CHANGE to room
 def find_new_move_room(visited, current_room, curr_id, encumbrance, 
                        strength, inventory, gold, armor, shoes, name, 
                        abilities, has_mined, wrapped):
@@ -438,6 +505,15 @@ def find_new_move_room(visited, current_room, curr_id, encumbrance,
     # Go to shop
     # mine_room = force_got_to(curr_id, 111)  # <--------------------------FORCE MINE---------------------------------
     # new_id = go_to_wishing_well_mine(curr_id) # <-------------------------- FROCE WISH AND MINE -------------------------
+    # force go to:
+    if force != False:
+        if (wrapped == True) & (has_mined == True):
+            curr_id = warp()
+            wrapped = False
+        print(f'============= Forced to go to {force} =============')
+        curr_id = force_go(curr_id, force)
+    
+     # Share and Enjoy
     
     encumbrance, strength, inventory, gold, armor, shoes, name, abilities, has_mined = response_func()
     
@@ -457,19 +533,15 @@ def find_new_move_room(visited, current_room, curr_id, encumbrance,
         print('==============Going to Pray================')
         curr_id = go_to_shrine(curr_id)
 
-    elif (has_mined == False) & (name != Initial_name):
+    elif (has_mined == True) & (name != Initial_name):
         print('=============== lets wish and mine =============')
         curr_id = go_to_wishing_well_mine(curr_id)
     
     # Wear stuff
-    elif ((armor == True) | (shoes == True)) & (has_mined == True):
+    elif ((armor == '') | (shoes == '')) & (has_mined == True):
         curr_id = go_to_transmogrifier(curr_id)
         
-<<<<<<< HEAD
     elif (wrapped == True) & (has_mined == True):
-=======
-    elif (wrapped == False) & (has_mined == True):
->>>>>>> 02f8fdb04ec09644be84d180ae36534e0ba3b751
         curr_id = warp()
         wrapped = False
         
@@ -482,67 +554,67 @@ def find_new_move_room(visited, current_room, curr_id, encumbrance,
     
         
         
-    # if curr_id not in visited:
-    #     for direction in ['n','s','w','e']:
-    #         print(direction)
-    #         visited[curr_id] = {}
-    #         visited[curr_id][direction] = '?'
-    # not_in_path = False
-    # if curr_id in path:
-    #     known_ids = path[curr_id]
-    #     print(f'known_ids: {known_ids}')
-    # else:
-    #     not_in_path = True
-    # room_exits = visited[curr_id]
-    # print(f'room_exits: {room_exits}\n')
-    # dirs = []
-    # for direction in room_exits:
-    #     dirs.append(direction)
-    # random.shuffle(dirs)
-    # for direction in dirs:
-    #     if room_exits[direction] == '?':
+    if curr_id not in visited:
+        for direction in ['n','s','w','e']:
+            print(direction)
+            visited[curr_id] = {}
+            visited[curr_id][direction] = '?'
+    not_in_path = False
+    if curr_id in path:
+        known_ids = path[curr_id]
+        print(f'known_ids: {known_ids}')
+    else:
+        not_in_path = True
+    room_exits = visited[curr_id]
+    print(f'room_exits: {room_exits}\n')
+    dirs = []
+    for direction in room_exits:
+        dirs.append(direction)
+    random.shuffle(dirs)
+    for direction in dirs:
+        if room_exits[direction] == '?':
             
-    #         if not_in_path:
-    #             data = '{"direction":"' + direction + '"}'
-    #         else:
-    #             next_room_id_pred = known_ids[direction]
-    #             print(f'next_room_id_pred: {next_room_id_pred}')
-    #             data = '{"direction":"' + direction + '", "next_room_id":"' + str(next_room_id_pred) + '"}'
-    #         if 'fly' in abilities:
-    #             next_room = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/fly/', 
-    #                                     headers=headers, data=data).json()
-    #         else:
-    #             next_room = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', 
-    #                                     headers=headers, data=data).json()
-    #         cooldown_func(next_room)
+            if not_in_path:
+                data = '{"direction":"' + direction + '"}'
+            else:
+                next_room_id_pred = known_ids[direction]
+                print(f'next_room_id_pred: {next_room_id_pred}')
+                data = '{"direction":"' + direction + '", "next_room_id":"' + str(next_room_id_pred) + '"}'
+            if 'fly' in abilities:
+                next_room = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/fly/', 
+                                        headers=headers, data=data).json()
+            else:
+                next_room = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/move/', 
+                                        headers=headers, data=data).json()
+            cooldown_func(next_room)
                 
-    #         next_room_id = next_room['room_id']
+            next_room_id = next_room['room_id']
             
-    #         if (len(next_room['items']) > 0):
-    #             weights = []
+            if (len(next_room['items']) > 0):
+                weights = []
                 
-    #             for i in next_room['items']:
-    #                 data_items = '{"name":"'+ i +'"}'
-    #                 response_examin = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/', 
-    #                                                 headers=headers, data=data_items).json()
-    #                 print('Exmaning items\n')
-    #                 print(response_examin)
-    #                 cooldown_func(response_examin)
+                for i in next_room['items']:
+                    data_items = '{"name":"'+ i +'"}'
+                    response_examin = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/', 
+                                                    headers=headers, data=data_items).json()
+                    print('Exmaning items\n')
+                    print(response_examin)
+                    cooldown_func(response_examin)
                     
                     
-    #                 if (encumbrance + response_examin['weight']) < strength:
-    #                     name_item = i
+                    if (encumbrance + response_examin['weight']) < strength:
+                        name_item = i
                         
-    #                     data_items = '{"name":"' + name_item + '"}'
+                        data_items = '{"name":"' + name_item + '"}'
 
-    #                     response_items = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/take/', 
-    #                                                         headers=headers, data=data_items).json()
-    #                     print('Picked up item\n')
-    #                     cooldown_func(response_items)
-    #                     encumbrance += response_examin['weight']
-    #                     inventory.append(name_item)
+                        response_items = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/take/', 
+                                                            headers=headers, data=data_items).json()
+                        print('Picked up item\n')
+                        cooldown_func(response_items)
+                        encumbrance += response_examin['weight']
+                        inventory.append(name_item)
                 
-    #         return direction, next_room, next_room_id, encumbrance, strength, inventory, gold, armor, shoes, name, abilities, wrapped
+            return direction, next_room, next_room_id, encumbrance, strength, inventory, gold, armor, shoes, name, abilities, wrapped
         
     return None, None, None, encumbrance, strength, inventory, gold, armor, shoes, name, abilities, wrapped
     

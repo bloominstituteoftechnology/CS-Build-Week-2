@@ -28,7 +28,7 @@ def cooldown_func(response):
         print(f'Remaining cooldown new move: {cooldown_rounded_up - i})', end="\r")
         time.sleep(1)
 # curl -X POST -H 'Authorization: Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' -H "Content-Type: application/json" -d '{"name":"nice jacket"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/take/
-# curl -X POST -H 'Authorization: Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
+# curl -X POST -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
 token = 'Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' #6a879ef0d8d6851f96f1d1144cd3836007c07225
 token_2 = 'Token 6a879ef0d8d6851f96f1d1144cd3836007c07225'
 url = 'https://lambda-treasure-hunt.herokuapp.com'
@@ -476,10 +476,10 @@ while s.size() > 0:
     print(f'Total rooms visited: {len(visited)}')
 
     # Save map info
-    f = open("visited2.txt","w")
+    f = open("visited.txt","w")
     f.write(str(visited))
     f.close()
     
-    f = open("room_info2.txt","w")
+    f = open("room_info.txt","w")
     f.write(str(room_info))
     f.close()

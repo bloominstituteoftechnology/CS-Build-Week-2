@@ -46,7 +46,7 @@ def cooldown_func_snitch(response, snitch_room):
         
 # curl -X POST -H 'Authorization: Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' -H "Content-Type: application/json" -d '{"name":"nice jacket"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/take/
 # curl -X POST -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
-token = 'Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' #6a879ef0d8d6851f96f1d1144cd3836007c07225
+token = 'Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' #6a879ef0d8d6851f96f1d1144cd3836007c07225
 url = 'https://lambda-treasure-hunt.herokuapp.com'
 headers = {
     'Authorization': token,
@@ -336,27 +336,19 @@ def dash_fly(curr_id,destination):
                 curr_id = next_room['room_id']
                 
         # f = open("snitch_room.txt","r+")
-        # snitch_room = int(get_snitch_room())
-        # # f.close()
-        # if snitch_room_copy != snitch_room:
-        #     continue
-        # else:
-            
-        data = '{"name":"golden snitch"}'
-        take_snitch = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/take/', 
-                                            headers=headers, data=data).json()
-        if len(take_snitch['errors']) > 0:
-            cooldown_func(take_snitch)
+        snitch_room = int(get_snitch_room())
+        # f.close()
+        if snitch_room_copy != snitch_room:
             continue
         else:
+            
+            data = '{"name":"golden snitch"}'
+            take_snitch = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/take/', 
+                                                headers=headers, data=data).json()
             print(take_snitch)
             print('=============== Took SNITCH! ===============\n'
                 '++++++++++++++++++++++++++++++++++++++++++++++')
             cooldown_func(take_snitch)
-            status = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/status/', 
-                            headers=headers).json()
-            print(status)
-            
             
     return destination
 
