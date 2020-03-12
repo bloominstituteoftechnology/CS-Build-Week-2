@@ -27,9 +27,9 @@ g.vertices = path_reverse
 def cooldown_func(response):
     cooldown = response["cooldown"]
     cooldown_rounded_up = math.ceil(cooldown)
-    for i in range(0, cooldown_rounded_up):
-        print(f'Remaining cooldown new move: {cooldown_rounded_up - i})', end="\r")
-        time.sleep(1)
+    # for i in range(0, cooldown_rounded_up):
+    #     print(f'Remaining cooldown new move: {cooldown_rounded_up - i})', end="\r")
+    time.sleep(cooldown)
 
 def cooldown_func_snitch(response, snitch_room):
     cooldown = response["cooldown"]
@@ -263,11 +263,10 @@ def dash_fly(curr_id,destination):
     print(snitch_room)
     snitch_room_copy = int(snitch_room)
     while True:
-        try:
-            snitch_room_copy = get_snitch_room()
-        except:
+        snitch_room_copy = get_snitch_room()
+        if snitch_room_copy is None:
             continue
-        if snitch_room == snitch_room_copy:
+        elif snitch_room == snitch_room_copy:
             continue
       
         
@@ -275,7 +274,7 @@ def dash_fly(curr_id,destination):
         i = 0
         ids = []
         directions = []
-        print(len(traversal_path))
+        # print(len(traversal_path))
         print(f'traversal_path: {traversal_path}')
         while i + 1 < len(traversal_path):
             # print(traversal_path[i])
@@ -331,6 +330,7 @@ def dash_fly(curr_id,destination):
                 next_room = requests.post('https://lambda-treasure-hunt.herokuapp.com/api/adv/fly/', 
                                     headers=headers, data=fly_data).json()
                 cooldown_func(next_room)
+                print(next_room)
                 print(f"room: {next_room['room_id']}")
                 # cooldown_func(next_room)
                 curr_id = next_room['room_id']

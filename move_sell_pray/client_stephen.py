@@ -27,9 +27,9 @@ g.vertices = path_reverse
 def cooldown_func(response):
     cooldown = response["cooldown"]
     cooldown_rounded_up = math.ceil(cooldown)
-    for i in range(0, cooldown_rounded_up):
-        print(f'Remaining cooldown new move: {cooldown_rounded_up - i})', end="\r")
-        time.sleep(1)
+    # for i in range(0, cooldown_rounded_up):
+    #     print(f'Remaining cooldown new move: {cooldown_rounded_up - i})', end="\r")
+    time.sleep(cooldown)
 
 def cooldown_func_snitch(response, snitch_room):
     cooldown = response["cooldown"]
@@ -46,7 +46,7 @@ def cooldown_func_snitch(response, snitch_room):
         
 # curl -X POST -H 'Authorization: Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' -H "Content-Type: application/json" -d '{"name":"nice jacket"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/take/
 # curl -X POST -H 'Authorization: Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/status/
-token = 'Token b9ac3ccda7673a719af4c4305ec9efacdef4c161' #6a879ef0d8d6851f96f1d1144cd3836007c07225
+token = 'Token 6a879ef0d8d6851f96f1d1144cd3836007c07225' #6a879ef0d8d6851f96f1d1144cd3836007c07225
 url = 'https://lambda-treasure-hunt.herokuapp.com'
 headers = {
     'Authorization': token,
@@ -263,11 +263,10 @@ def dash_fly(curr_id,destination):
     print(snitch_room)
     snitch_room_copy = int(snitch_room)
     while True:
-        try:
-            snitch_room_copy = get_snitch_room()
-        except:
+        snitch_room_copy = get_snitch_room()
+        if snitch_room_copy is None:
             continue
-        if snitch_room == snitch_room_copy:
+        elif snitch_room == snitch_room_copy:
             continue
       
         
@@ -275,7 +274,7 @@ def dash_fly(curr_id,destination):
         i = 0
         ids = []
         directions = []
-        print(len(traversal_path))
+        # print(len(traversal_path))
         print(f'traversal_path: {traversal_path}')
         while i + 1 < len(traversal_path):
             # print(traversal_path[i])
@@ -674,3 +673,70 @@ def go_back(traversal_path, visited, curr_room):
 s.push(curr_id)
 n = 0
 while s.size() > 0:
+    print(n)
+    if n == 0:
+        s.pop()
+    n += 1
+    cooldown = response["cooldown"]
+    print(f"You're in room {curr_id}\n")
+    
+    cooldown_rounded_up = math.ceil(cooldown)
+    
+    for i in range(0, cooldown_rounded_up):
+        print(f'Remaining cooldown 1: {cooldown_rounded_up - i})', end="\r")
+        time.sleep(1)
+    
+    if direction == "exit":
+        moving = False
+
+    if curr_id not in visited:
+        print('not in visited')
+        visited[curr_id] = {}
+        for direction in curr_room['exits']:
+            visited[curr_id][direction] = '?'
+    next_move, next_room, next_room_id, encumbrance, strength, inventory, gold, armor, shoes, name, abilities, wrapped = find_new_move_room(visited, 
+                                                                                   curr_room, 
+                                                                                   curr_id, 
+                                                                                   encumbrance, 
+                                                                                   strength, 
+                                                                                   inventory,
+                                                                                   gold, 
+                                                                                   armor, 
+                                                                                   shoes,
+                                                                                   name,
+                                                                                   abilities,
+                                                                                   has_mined,
+                                                                                   wrapped
+                                                                                   )
+    
+    if next_move == None:
+        print(f"Reached a deadend:\n")
+        curr_id = go_back(traversal_path, visited, curr_room)
+        continue
+    else:
+        traversal_path.append(next_move)
+        print(f"Going {next_move} towards {next_room_id}\n")
+        visited[curr_id][next_move] = next_room_id
+        room_info[curr_id]['exit_id'] = visited[curr_id]
+        if next_room_id not in visited:
+            visited[next_room_id] = {}
+            for direction in next_room['exits']:
+                visited[next_room_id][direction] = '?'
+        visited[next_room_id][reverse[next_move]] = curr_id
+        
+        room_info[next_room_id] = next_room
+        room_info[next_room_id]['exit_id'] = visited[next_room_id]
+        
+        s.push([reverse[next_move], curr_id])
+        curr_id = next_room_id
+    print("======================== Moved to new room =========================")
+    print(f'Total rooms visited: {len(visited)}')
+
+    # Save map info
+    f = open("visited.txt","w")
+    f.write(str(visited))
+    f.close()
+    
+    f = open("room_info.txt","w")
+    f.write(str(room_info))
+    f.close()
