@@ -152,7 +152,7 @@ You may drop items with the following command:
 curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"treasure"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/drop/
 `
 
-Note to collect enough treasure for later tasks, you'll want to automate the process of traversing the graph (once your map is complete) and picking up treasure
+Note: to collect enough treasure for later tasks, you'll want to automate the process of traversing the graph (once your map is complete) and picking up treasure.
 
 ## Selling Treasure
 
@@ -281,12 +281,12 @@ Once mastering the dash, you may use this ability to cover many rooms in one dir
 curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"direction":"n", "num_rooms":"5", "next_room_ids":"10,19,20,63,72"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/dash/
 `
 
-Formatting is very important for these commands: next_room_ids must match every room in a straight line and num_rooms must be the exact count for the dash to work successfully.
+Formatting is very important for these commands: `next_room_ids` must match every room in a straight line and `num_rooms` must be the exact count for the dash to work successfully.
 
 
 ## Carry/Receive
 
-You may come across a ghostly companion ease your encumbrance by holding your heaviest item:
+You may come across a ghostly companion to ease your encumbrance by holding your heaviest item:
 
 `
 curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"[ITEM_NAME]"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/carry/
@@ -301,7 +301,7 @@ curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' 
 
 ## Warp
 
-You may come across the ability to warp to an alternate dimension where you can compete with other players to search for the mysterious golden snitch. Note that warp travel is dangerous so you must be have both bodywear and footwear equipped to warp.
+You may come across the ability to warp to an alternate dimension where you can compete with other players to search for the mysterious golden snitch. Note that warp travel is dangerous so you must have both bodywear and footwear equipped to warp.
 
 `
 curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" https://lambda-treasure-hunt.herokuapp.com/api/adv/warp/
@@ -333,7 +333,7 @@ curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' 
 
 ## Proof
 
-Get the last valid proof to use to mine a new block.  Also returns the current difficulty level, which is the number of `0`'s required at the beginning of the hash for a new proof to be valid.  
+Get the last valid proof in order to to mine a new block.  Also returns the current difficulty level, which is the number of `0`'s required at the beginning of the hash for a new proof to be valid.  
 
 The proof of work algorithm for this blockchain is not the same as we used in class. It uses a different method:
 
@@ -376,4 +376,3 @@ You can spend your Lambda Coins to transform items into powerful equipment at th
 `
 curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"[NAME OF ITEM]"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/transmogrify/
 `
-
