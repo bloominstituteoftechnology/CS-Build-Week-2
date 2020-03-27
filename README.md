@@ -333,7 +333,7 @@ curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' 
 
 ## Proof
 
-Get the last valid proof used to mine a new block.  Also returns the current difficulty level, which is the number of `0`'s required at the beginning of the hash for a new proof to be valid.  
+Get the last valid proof in order to to mine a new block.  Also returns the current difficulty level, which is the number of `0`'s required at the beginning of the hash for a new proof to be valid.  
 
 The proof of work algorithm for this blockchain is not the same as we used in class. It uses a different method:
 
@@ -376,4 +376,3 @@ You can spend your Lambda Coins to transform items into powerful equipment at th
 `
 curl -X POST -H 'Authorization: Token 7a375b52bdc410eebbc878ed3e58b2e94a8cb607' -H "Content-Type: application/json" -d '{"name":"[NAME OF ITEM]"}' https://lambda-treasure-hunt.herokuapp.com/api/adv/transmogrify/
 `
-
