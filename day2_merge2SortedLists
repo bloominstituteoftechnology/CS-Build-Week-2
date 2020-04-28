@@ -1,0 +1,72 @@
+/*
+
+https://leetcode.com/problems/merge-two-sorted-lists/
+
+
+*/
+
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
+ */
+var mergeTwoLists = function(l1, l2) {
+    if (l1 === null) {
+        return l2
+    }
+    
+    if (l2 === null) {
+        return l1
+    }
+    
+    let currNodeL1 = l1;
+    let currNodeL2 = l2;
+    let head = new ListNode(0);
+    let currNodeOut = head;        
+    let outNodeVal = null
+    let newNode = null;
+    
+    if(currNodeL1.val < currNodeL2.val) {
+        currNodeOut.val = currNodeL1.val
+        currNodeL1 = currNodeL1.next;
+    }
+    else {
+        currNodeOut.val = currNodeL2.val
+        currNodeL2 = currNodeL2.next;
+    }
+        
+    
+    while ((currNodeL1 !== null) && (currNodeL2 !== null)) {
+        newNode = new ListNode(0)
+        if(currNodeL1.val < currNodeL2.val) {
+            newNode.val = currNodeL1.val
+            currNodeL1 = currNodeL1.next;
+        }
+        else {
+            newNode.val = currNodeL2.val
+            currNodeL2 = currNodeL2.next;
+        }
+        currNodeOut.next = newNode;
+        currNodeOut = newNode;
+        
+    }
+    
+    if (currNodeL1 !== null) {
+        currNodeOut.next = currNodeL1;
+    }
+    
+    if (currNodeL2 !== null) {
+        currNodeOut.next = currNodeL2;
+    }
+
+    return head
+    
+};
