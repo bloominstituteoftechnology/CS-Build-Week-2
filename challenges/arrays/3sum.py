@@ -47,4 +47,31 @@ for j in diff:
 print(diff)
 print(sums)
 
+
+better solution
+
+def threeNumberSum(array, targetSum):
+    #create an array to store triplets
+	#sort the given array in ascending order 
+	#create a variable to sum of three elements 
+	
+	#for i in range(0, len(array) -2 ) #-2 because right will point to last  
+		#create a variable to point to the element after current elements
+		#right = len(array) - 1
+		#while left < right:  
+			#current_sum = array[i] + array[left] + array[right]
+			#if current_sum == targetSum: 
+				#triplets.append([array[i], array[left], array[right]])
+				#left += 1
+				#right -= 1
+
+			#elif current_sum > targetSum: 
+				#right -= 1
+			#elif current_sum < targetSum: 
+				#left += 1
+
+		
+		
+	
+	
 '''
