@@ -1,5 +1,5 @@
 function threeNumberSum(array, targetSum) {
-    array.sort((a, b) => a - b)
+    array.sort((a, b) => a - b) //forgot about this!
     let triplets = []
   
     for( i = 0; i < array.length - 2; i++){
