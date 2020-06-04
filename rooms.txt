@@ -1,0 +1,11 @@
+{"A misty room": 44, 
+"Mt. Holloway": 11, 
+"The Transmogriphier": 495, 
+"The Peak of Mt. Holloway": 22, 
+"Pirate Ry's": 467, 
+"A brightly lit room": 0, 
+"A Dark Cave": 488, 
+"Linh's Shrine": 461, 
+"Glasowyn's Grave": 499, 
+"Wishing Well": 55, 
+"Shop": 1}
