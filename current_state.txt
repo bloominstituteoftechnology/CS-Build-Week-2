@@ -1,0 +1,24 @@
+{
+    "room_id": 55,
+    "title": "Wishing Well",
+    "description": "You are standing besides a large well. A sign next the well reads 'EXAMINE WELL, FIND WEALTH'.",
+    "coordinates": "(63,61)",
+    "elevation": 0,
+    "terrain": "NORMAL",
+    "players": [
+        "[matthew_harshman]",
+        "Andy",
+        "Sean Wu",
+        "Kathryn",
+        "['Matt']"
+    ],
+    "items": [],
+    "exits": [
+        "w"
+    ],
+    "cooldown": 20.0,
+    "errors": [
+        "You cannot move that way: +5s CD"
+    ],
+    "messages": []
+}
