@@ -1,0 +1,19 @@
+{
+  "name": "cs-build-week-2",
+  "version": "1.0.0",
+  "description": "treasure-hunter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Siddartha08/CS-Build-Week-2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Siddartha08/CS-Build-Week-2/issues"
+  },
+  "homepage": "https://github.com/Siddartha08/CS-Build-Week-2#readme"
+}
