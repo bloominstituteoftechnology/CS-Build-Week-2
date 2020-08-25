@@ -1,40 +1,43 @@
 class Solution:
     def minimumSwap(self, s1: str, s2: str) -> int:
-        #         i1 = {"x": [], "y": []}
-        #         i2 = {"x": [], "y": []}
-
-        #         for i in range(len(s1)):
-        #             i1[s1[i]].append(i)
-
-        #         for i in range(len(s2)):
-        #             i2[s2[i]].append(i)
-
-        #         if (len(i1["x"]) + len(i2["x"])) % 2 != 0 or (len(i1["y"]) + len(i2["y"])) % 2 != 0:
+        # this solution swaps correctly, but not in the minimum number of steps
+        # s1 = list(s1)
+        # s2 = list(s2)
+        # equal_buffer = moves = 0
+        # while equal_buffer < len(s1):
+        #     if s1[equal_buffer] != s2[equal_buffer]:
+        #         try:
+        #             if s2[equal_buffer] not in s2[equal_buffer + 1:]:
+        #                 s1[equal_buffer], s2[equal_buffer] = s2[equal_buffer], s1[equal_buffer]
+        #                 moves += 1
+        #             for i in range(len(s2[equal_buffer + 1:])):
+        #                 if s2[equal_buffer] == s2[equal_buffer + i + 1]:
+        #                     if s1[equal_buffer + i + 1] != s2[equal_buffer + i + 1:]:
+        #                         s1[equal_buffer], s2[equal_buffer + i +
+        #                                              1] = s2[equal_buffer + i + 1], s1[equal_buffer]
+        #                         moves += 1
+        #                         break
+        #         except IndexError:
         #             return -1
-        s1 = list(s1)
-        s2 = list(s2)
-        equal_buffer = moves = 0
-        while equal_buffer < len(s1):
-            if s1[equal_buffer] != s2[equal_buffer]:
-                try:
-                    if s2[equal_buffer] not in s2[equal_buffer + 1:]:
-                        s1[equal_buffer], s2[equal_buffer] = s2[equal_buffer], s1[equal_buffer]
-                        moves += 1
-                    for i in range(len(s2[equal_buffer + 1:])):
-                        if s2[equal_buffer] == s2[equal_buffer + i + 1]:
-                            if s1[equal_buffer + i + 1] != s2[equal_buffer + i + 1:]:
-                                s1[equal_buffer], s2[equal_buffer + i +
-                                                     1] = s2[equal_buffer + i + 1], s1[equal_buffer]
-                                moves += 1
-                                break
-                except IndexError:
-                    return -1
-            equal_buffer += 1
-        if "".join(s1) == "".join(s2):
-            print(s1, s2)
-            return moves
-        else:
-            return -1
+        #     equal_buffer += 1
+        # if "".join(s1) == "".join(s2):
+        #     print(s1, s2)
+        #     return moves
+        # else:
+        #     return -1
+        ans, sequences, visited = 0, set(), set()
+        for c1, c2 in zip(s1, s2):
+            if c1 != c2:
+                if (c1, c2) in sequences:
+                    sequences.remove((c1, c2))
+                    ans += 1
+                else: sequences.add((c1, c2))
+        for seq in sequences:
+            if (seq[1], seq[0]) not in sequences: return -1
+            if (seq[1], seq[0]) not in visited:
+                ans += 2
+                visited.add(seq)
+        return ans
 
 
 test = Solution()
