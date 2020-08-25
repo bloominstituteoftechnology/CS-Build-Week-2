@@ -87,3 +87,23 @@ Expected Output:
 3. 2
 4. 4
 ```
+
+## [Longest Common Prefix](./longestcommonprefix.py)
+
+Write a function to find the longest common prefix string amongst an array of strings.
+
+>If there is no common prefix, return an empty string "".
+
+Example Inputs:
+
+``` python
+1. ["flower", "flow", "flight"]
+2. ["dog", "racecar", "car"]
+```
+
+Expected Output:
+
+``` python
+1. prefix: "fl"
+1. prefix: ""
+```
