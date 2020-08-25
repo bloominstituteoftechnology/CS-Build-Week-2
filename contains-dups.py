@@ -17,4 +17,4 @@ class Solution:
 
 
   # Single line solution, slightly more efficient
-      # return len(set(nums)) < len(nums)
+  # return len(set(nums)) < len(nums)
