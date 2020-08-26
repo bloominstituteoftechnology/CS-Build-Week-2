@@ -25,6 +25,7 @@ class Solution:
         #     return moves
         # else:
         #     return -1
+        
         ans, sequences, visited = 0, set(), set()
         for c1, c2 in zip(s1, s2):
             if c1 != c2:
