@@ -2,16 +2,36 @@ class Solution():
     def mutateMatrix(self, a, q):
         midpoint = (len(a) - 1) / 2
 
+        def rotate90Clockwise(A):
+            # code needs to be adapted
+            N = len(A[0]) 
+            for i in range(N // 2): 
+                for j in range(i, N - i - 1): 
+                    temp = A[i][j] 
+                    A[i][j] = A[N - 1 - j][i] 
+                    A[N - 1 - j][i] = A[N - 1 - i][N - 1 - j] 
+                    A[N - 1 - i][N - 1 - j] = A[j][N - 1 - i] 
+                    A[j][N - 1 - i] = temp
         def clockwise(coords):
             i, j = coords
-            di = i - midpoint
-            dj = j - midpoint
+            di = abs(i - midpoint)
+            dj = abs(j - midpoint)
+            if di < 0 and dj < 0:
+                ni = i
+                nj = dj + midpoint
+            elif di < 0 and dj > 0:
+                ni = midpoint + di
+                nj = j
+            elif di > 0 and dj > 0:
+                ni = i
+                nj = midpoint - dj
+            elif di < 0 and dj > 0:
+                ni = midpoint - di
+                nj = j
+            else:
+                pass
 
-            ni = midpoint - dj
-            nj = midpoint - di
-            # print(f"di: {di} - dj: {dj}")
-
-            # print(f"{i}, {j} -> {ni}, {nj}")
+            print(f"{i}, {j} -> {int(ni)}, {int(nj)}")
             return (int(ni), int(nj))
 
         def reflectmain(coords):
@@ -39,7 +59,7 @@ class Solution():
             for j in range(len(a)):
                 if (i, j) not in maptable:
                     maptable[(i, j)] = {
-                        0: None,
+                        0: clockwise((i, j)),
                         1: reflectmain((i, j)),
                         2: reflectsecond((i, j))
                     }
