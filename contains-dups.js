@@ -1,12 +1,13 @@
 /**
- * @param {number[]} nums
+ * @param {number[]} x
  * @return {boolean}
  */
-var containsDuplicate = function (nums) {
-  // create a set
+
+var containsDuplicate = function (x) {
+  // create a set b/c sets cannot contain dups
   let numbers = new Set();
   // iterate over the array
-  for (let num of nums) {
+  for (let num of x) {
     // get to a number, check if it's already in the set
     if (!numbers.has(num)) {
       // if it's not in the set add the number to the set

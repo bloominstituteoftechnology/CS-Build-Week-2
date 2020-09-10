@@ -3,7 +3,7 @@
  * @return {boolean}
  */
 class Solution:
-  def containsDuplicate(self, nums: List[int]) -> bool: 
+    def containsDuplicate(self, nums: List[int]) -> bool: 
 
     # First pass solution not very efficient
     checked = set()
