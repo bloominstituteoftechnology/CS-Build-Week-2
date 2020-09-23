@@ -16,5 +16,5 @@ class Solution:
 
 
 
-  # Single line solution, slightly more efficient
-  # return len(set(nums)) < len(nums)
+    # Single line solution, slightly more efficient
+    return len(set(nums)) < len(nums)
