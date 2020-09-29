@@ -1,8 +1,9 @@
-# CS Build Week 2: Interview Prep
 
-This is a general repo that you can fork for holding any artifacts you
-might need to submit during the week. Feel free to make subdirectories
-here as necessary.
+=======
+# CS Build Week 2
 
-For all details about the week, [check out the page in
-TrainingKit](https://learn.lambdaschool.com/cs/sprint/reco0t22NdXmr8VyL).
+
+## Taking the opportunity to save my code challenge practice.
+
+Some of the problems are done in both python and Javascript. Some were solved more than one way.
+>>>>>>> 6c54ba4bca544d7403a83a6c6d5edf803644a1b2
