@@ -43,3 +43,31 @@ print(squareRoot(1))    // 1
 print(squareRoot(0))    // 0
 
 //---------------------------------------------------------------------------------------------
+
+// MARK: - Hash Table Problems
+// Key Words: two arrays, intersection, count
+
+//---------------------------------------------------------------------------------------------
+
+// Intersection of Two Arrays II
+// Given two arrays, write a function to compute their intersection.
+
+func intersect(_ nums1: [Int], _ nums2: [Int]) -> [Int] {
+    var res: [Int] = []
+    var dict = [Int: Int]()
+    
+    for n1 in nums1 {
+        dict[n1, default: 0] += 1
+    }
+    
+    for n2 in nums2 {
+        if dict[n2, default: 0] > 0 {
+            res.append(n2)
+            dict[n2]! -= 1
+        }
+    }
+    
+    return res
+}
+
+//---------------------------------------------------------------------------------------------
