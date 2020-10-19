@@ -1,20 +1,18 @@
-from collections import deque
-
 class MyQueue:
 
     def __init__(self):
         """
         Initialize your data structure here.
         """
-        self.stack_A = deque()
-        self.stack_B = deque()
+        self.stack_A = list()
+        self.stack_B = list()
 
     def stack_A_push(self, val):
         """
         push value onto stack A
         """
         if val != None:
-            self.stack_A.append(val)
+            self.stack_A.insert(0, val)
 
     def stack_A_pop(self):
         """
@@ -23,25 +21,32 @@ class MyQueue:
         if len(self.stack_A) == 0:
             return None
 
-        return self.stack_A.pop()
+        ret_elm = self.stack_A[0]
+        del self.stack_A[0]
+        return ret_elm
 
     def stack_A_ret_last(self):
         """
         This functions essentially pops the next queue value
         by returning the last value in the stack
         """
+        # Does Stack A only have on 1 element?
+        if len(self.stack_A) == 1:
+            # yes: return the last element now
+            # Pop the first element in the stack (last element in the queue)
+            return self.stack_A_pop()
+
+        # Stack A has more than one element
         lst_elm = self.stack_A_pop()
-        while lst_elm != None:
-            # Is lst_elm the actual last element?
-            if len(self.stack_A) <= 1:
-                # yes: don't push to Stack B, break out
-                break
-            
-            # Not the last element in the list
+        while True:
             # Push value to Stack B
             self.stack_B_push(lst_elm)
             # Pop the next value from Stack A
             lst_elm = self.stack_A_pop()
+            # Is this the last element in the stack
+            if len(self.stack_A) == 0:
+                # yes: have last element; break without pushing to Stack B
+                break
 
         # Done popping from Stack A
         # Push all the values back from Stack B to Stack A
@@ -79,7 +84,7 @@ class MyQueue:
         push value onto stack B
         """
         if val != None:
-            self.stack_B.append(val)
+            self.stack_B.insert(0, val)
 
     def stack_B_pop(self):
         """
@@ -88,7 +93,9 @@ class MyQueue:
         if len(self.stack_B) == 0:
             return None
 
-        return self.stack_B.pop()
+        ret_elm = self.stack_B[0]
+        del self.stack_B[0]
+        return ret_elm
 
     def stack_A2stack_B(self):
         """
@@ -154,10 +161,13 @@ my_queue = MyQueue()
 my_queue.push(1)
 my_queue.push(2)
 my_queue.push(3)
+my_pop = my_queue.pop()
+quit()
+my_queue.push(3)
 my_queue.push(4)
-my_queue.pop()
 my_queue.push(5)
-my_queue.pop()
-my_queue.pop()
-my_queue.pop()
-my_queue.pop()
+my_pop = my_queue.pop()
+my_pop = my_queue.pop()
+my_pop = my_queue.pop()
+my_pop = my_queue.pop()
+quit()
