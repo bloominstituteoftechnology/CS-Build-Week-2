@@ -5,4 +5,4 @@ might need to submit during the week. Feel free to make subdirectories
 here as necessary.
 
 For all details about the week, [check out the page in
-TrainingKit](https://learn.lambdaschool.com/cs/sprint/reco0t22NdXmr8VyL).
+TrainingKit](https://learn.bloomtech.com/cs/sprint/reco0t22NdXmr8VyL).
